@@ -1,5 +1,6 @@
 """Order management endpoints: create, read, update, name check, pricing."""
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 
@@ -50,7 +51,7 @@ async def create_formation_order(
 
 @router.get("", response_model=OrderListResponse)
 async def list_formation_orders(
-    status: OrderStatus | None = None,
+    status: Optional[OrderStatus] = None,
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
     current_user: User = Depends(get_current_user),

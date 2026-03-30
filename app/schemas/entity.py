@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from pydantic import BaseModel
@@ -19,24 +20,24 @@ class StateRequirementResponse(BaseModel):
     state_name: str
     entity_type: str
     state_filing_fee: int
-    expedited_fee: int | None
-    name_reservation_fee: int | None
+    expedited_fee: Optional[int]
+    name_reservation_fee: Optional[int]
     standard_processing_days: int
-    expedited_processing_days: int | None
+    expedited_processing_days: Optional[int]
     requires_registered_agent: bool
     requires_operating_agreement: bool
     requires_publication: bool
     requires_initial_report: bool
     min_members: int
-    min_directors: int | None
-    annual_report_fee: int | None
-    annual_report_month: int | None
-    franchise_tax: int | None
+    min_directors: Optional[int]
+    annual_report_fee: Optional[int]
+    annual_report_month: Optional[int]
+    franchise_tax: Optional[int]
     filing_agency: str
-    filing_agency_url: str | None
+    filing_agency_url: Optional[str]
     online_filing_available: bool
-    naming_rules: dict | None
-    required_documents: dict | None
+    naming_rules: Optional[dict]
+    required_documents: Optional[dict]
 
     model_config = {"from_attributes": True}
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime
@@ -9,8 +10,8 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: str
-    phone: str | None = None
-    company_name: str | None = None
+    phone: Optional[str] = None
+    company_name: Optional[str] = None
 
 
 class UserLogin(BaseModel):
@@ -22,8 +23,8 @@ class UserResponse(BaseModel):
     id: uuid.UUID
     email: str
     full_name: str
-    phone: str | None
-    company_name: str | None
+    phone: Optional[str]
+    company_name: Optional[str]
     is_active: bool
     plan: str = "free"
     created_at: datetime
@@ -32,9 +33,9 @@ class UserResponse(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    full_name: str | None = None
-    phone: str | None = None
-    company_name: str | None = None
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    company_name: Optional[str] = None
 
 
 class TokenResponse(BaseModel):
@@ -45,27 +46,27 @@ class TokenResponse(BaseModel):
 
 class APIKeyCreate(BaseModel):
     name: str
-    description: str | None = None
+    description: Optional[str] = None
     environment: str = "test"  # test or live
     scopes: list[str] = []  # ["orders:read", "orders:write", "states:read"]
     rate_limit_per_minute: int = 60
-    expires_in_days: int | None = None  # None = no expiry
+    expires_in_days: Optional[int] = None  # None = no expiry
 
 
 class APIKeyResponse(BaseModel):
     id: uuid.UUID
     name: str
-    description: str | None
-    key: str | None = None  # Only returned on creation
+    description: Optional[str]
+    key: Optional[str] = None  # Only returned on creation
     key_prefix: str
     environment: str
     scopes: list[str]
     rate_limit_per_minute: int
     rate_limit_per_day: int
     is_active: bool
-    expires_at: datetime | None
-    last_used_at: datetime | None
-    last_used_ip: str | None = None
+    expires_at: Optional[datetime]
+    last_used_at: Optional[datetime]
+    last_used_ip: Optional[str] = None
     total_requests: int = 0
     created_at: datetime
 
@@ -77,11 +78,11 @@ class APIKeyRenew(BaseModel):
 
 
 class APIKeyUpdate(BaseModel):
-    name: str | None = None
-    description: str | None = None
-    scopes: list[str] | None = None
-    rate_limit_per_minute: int | None = None
-    is_active: bool | None = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    scopes: Optional[List[str]] = None
+    rate_limit_per_minute: Optional[int] = None
+    is_active: Optional[bool] = None
 
 
 # Available scopes for documentation

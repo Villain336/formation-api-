@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, timezone
 import enum
@@ -32,7 +35,7 @@ class Document(Base):
     doc_type: Mapped[DocumentType] = mapped_column(SAEnum(DocumentType), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_path: Mapped[str] = mapped_column(String(500), nullable=False)
-    file_size: Mapped[int | None] = mapped_column(Integer)
+    file_size: Mapped[Optional[int]] = mapped_column(Integer)
     mime_type: Mapped[str] = mapped_column(String(100), default="application/pdf")
     generated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

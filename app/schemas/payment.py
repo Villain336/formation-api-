@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime
@@ -21,11 +22,11 @@ class PaymentIntentResponse(BaseModel):
 class PaymentResponse(BaseModel):
     id: uuid.UUID
     order_id: uuid.UUID
-    stripe_payment_intent_id: str | None
+    stripe_payment_intent_id: Optional[str]
     amount: int
     currency: str
     status: PaymentStatus
-    description: str | None
+    description: Optional[str]
     created_at: datetime
 
     model_config = {"from_attributes": True}

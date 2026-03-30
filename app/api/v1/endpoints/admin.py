@@ -1,5 +1,6 @@
 """Admin endpoints for managing orders, users, and system operations."""
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime, timezone
@@ -56,8 +57,8 @@ async def admin_dashboard(
 
 @router.get("/orders", response_model=list[OrderResponse])
 async def admin_list_orders(
-    status: OrderStatus | None = None,
-    state: str | None = None,
+    status: Optional[OrderStatus] = None,
+    state: Optional[str] = None,
     page: int = Query(1, ge=1),
     per_page: int = Query(50, ge=1, le=200),
     admin: User = Depends(get_admin_user),

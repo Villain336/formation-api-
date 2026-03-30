@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -11,7 +12,7 @@ from app.core.config import settings
 ALGORITHM = "HS256"
 
 
-def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
+def create_access_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
     expire = datetime.now(timezone.utc) + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
@@ -19,7 +20,7 @@ def create_access_token(subject: str, expires_delta: timedelta | None = None) ->
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
 
 
-def verify_token(token: str) -> str | None:
+def verify_token(token: str) -> Optional[str]:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         return payload.get("sub")

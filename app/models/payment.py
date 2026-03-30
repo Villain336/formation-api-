@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, timezone
 import enum
@@ -25,13 +28,13 @@ class Payment(Base):
     order_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False, index=True
     )
-    stripe_payment_intent_id: Mapped[str | None] = mapped_column(String(255), unique=True)
+    stripe_payment_intent_id: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
     amount: Mapped[int] = mapped_column(Integer, nullable=False)  # cents
     currency: Mapped[str] = mapped_column(String(3), default="usd")
     status: Mapped[PaymentStatus] = mapped_column(
         SAEnum(PaymentStatus), default=PaymentStatus.PENDING
     )
-    description: Mapped[str | None] = mapped_column(String(500))
+    description: Mapped[Optional[str]] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

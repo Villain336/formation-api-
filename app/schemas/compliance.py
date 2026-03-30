@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime, date
@@ -16,13 +17,13 @@ class ComplianceTaskResponse(BaseModel):
     state: str
     description: str
     reminder_sent: bool
-    filed_at: datetime | None
-    notes: str | None
+    filed_at: Optional[datetime]
+    notes: Optional[str]
     created_at: datetime
 
     model_config = {"from_attributes": True}
 
 
 class ComplianceTaskUpdate(BaseModel):
-    status: ComplianceStatus | None = None
-    notes: str | None = None
+    status: Optional[ComplianceStatus] = None
+    notes: Optional[str] = None

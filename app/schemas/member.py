@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime
@@ -10,13 +11,13 @@ from app.models.member import MemberRole
 class MemberCreate(BaseModel):
     role: MemberRole
     full_name: str
-    title: str | None = None
-    email: str | None = None
-    phone: str | None = None
-    ssn_last4: str | None = None
-    ownership_percentage: float | None = None
+    title: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    ssn_last4: Optional[str] = None
+    ownership_percentage: Optional[float] = None
     address_line1: str
-    address_line2: str | None = None
+    address_line2: Optional[str] = None
     city: str
     state: str
     zip_code: str
@@ -27,9 +28,9 @@ class MemberResponse(BaseModel):
     id: uuid.UUID
     role: MemberRole
     full_name: str
-    title: str | None
-    email: str | None
-    ownership_percentage: float | None
+    title: Optional[str]
+    email: Optional[str]
+    ownership_percentage: Optional[float]
     city: str
     state: str
     created_at: datetime

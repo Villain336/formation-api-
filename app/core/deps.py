@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime, timezone
@@ -18,8 +19,8 @@ api_key_header = APIKeyHeader(name=settings.API_KEY_HEADER, auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Security(bearer_scheme),
-    api_key: str | None = Security(api_key_header),
+    credentials: Optional[HTTPAuthorizationCredentials] = Security(bearer_scheme),
+    api_key: Optional[str] = Security(api_key_header),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     """Authenticate via JWT bearer token or API key."""

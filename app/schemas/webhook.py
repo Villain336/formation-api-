@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime
@@ -13,7 +14,7 @@ class WebhookEndpointCreate(BaseModel):
 class WebhookEndpointResponse(BaseModel):
     id: uuid.UUID
     url: str
-    secret: str | None = None  # Only on creation
+    secret: Optional[str] = None  # Only on creation
     events: list[str]
     is_active: bool
     created_at: datetime
@@ -25,9 +26,9 @@ class WebhookEventResponse(BaseModel):
     id: uuid.UUID
     event_type: str
     payload: dict
-    status_code: int | None
+    status_code: Optional[int]
     attempts: int
-    delivered_at: datetime | None
+    delivered_at: Optional[datetime]
     created_at: datetime
 
     model_config = {"from_attributes": True}

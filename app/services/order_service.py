@@ -1,5 +1,6 @@
 """Order creation and management service."""
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 from datetime import datetime, date, timezone
@@ -84,7 +85,7 @@ async def create_order(db: AsyncSession, user_id: uuid.UUID, data: OrderCreate) 
     return result.scalar_one()
 
 
-async def get_order(db: AsyncSession, order_id: uuid.UUID, user_id: uuid.UUID | None = None) -> Order | None:
+async def get_order(db: AsyncSession, order_id: uuid.UUID, user_id: Optional[uuid.UUID] = None) -> Optional[Order]:
     """Get order by ID, optionally filtered by user."""
     query = (
         select(Order)
@@ -100,7 +101,7 @@ async def get_order(db: AsyncSession, order_id: uuid.UUID, user_id: uuid.UUID | 
 async def list_orders(
     db: AsyncSession,
     user_id: uuid.UUID,
-    status: OrderStatus | None = None,
+    status: Optional[OrderStatus] = None,
     page: int = 1,
     per_page: int = 20,
 ) -> tuple[list[Order], int]:
@@ -161,10 +162,10 @@ async def update_order_status(
     db: AsyncSession,
     order: Order,
     new_status: OrderStatus,
-    changed_by: uuid.UUID | None = None,
-    notes: str | None = None,
-    state_filing_number: str | None = None,
-    rejection_reason: str | None = None,
+    changed_by: Optional[uuid.UUID] = None,
+    notes: Optional[str] = None,
+    state_filing_number: Optional[str] = None,
+    rejection_reason: Optional[str] = None,
 ) -> Order:
     """Transition order to a new status with validation."""
     valid_transitions = {

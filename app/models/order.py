@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, timezone
 
@@ -44,11 +47,11 @@ class Order(Base):
     entity_type: Mapped[str] = mapped_column(String(50), nullable=False)  # llc, corporation, etc.
     state_of_formation: Mapped[str] = mapped_column(String(2), nullable=False, index=True)
     business_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    business_name_alt1: Mapped[str | None] = mapped_column(String(255))
-    business_name_alt2: Mapped[str | None] = mapped_column(String(255))
-    business_purpose: Mapped[str | None] = mapped_column(Text)
+    business_name_alt1: Mapped[Optional[str]] = mapped_column(String(255))
+    business_name_alt2: Mapped[Optional[str]] = mapped_column(String(255))
+    business_purpose: Mapped[Optional[str]] = mapped_column(Text)
     business_address_line1: Mapped[str] = mapped_column(String(255), nullable=False)
-    business_address_line2: Mapped[str | None] = mapped_column(String(255))
+    business_address_line2: Mapped[Optional[str]] = mapped_column(String(255))
     business_city: Mapped[str] = mapped_column(String(100), nullable=False)
     business_state: Mapped[str] = mapped_column(String(2), nullable=False)
     business_zip: Mapped[str] = mapped_column(String(10), nullable=False)
@@ -70,14 +73,14 @@ class Order(Base):
     total_amount: Mapped[int] = mapped_column(Integer, default=0)
 
     # Filing info
-    state_filing_number: Mapped[str | None] = mapped_column(String(100))
-    filed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    effective_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    rejection_reason: Mapped[str | None] = mapped_column(Text)
+    state_filing_number: Mapped[Optional[str]] = mapped_column(String(100))
+    filed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    effective_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    rejection_reason: Mapped[Optional[str]] = mapped_column(Text)
 
     # Metadata
-    metadata_: Mapped[dict | None] = mapped_column("metadata", JSON)
-    notes: Mapped[str | None] = mapped_column(Text)
+    metadata_: Mapped[Optional[dict]] = mapped_column("metadata", JSON)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -96,8 +99,8 @@ class Order(Base):
     status_history: Mapped[list["OrderStatusHistory"]] = relationship(
         back_populates="order", cascade="all, delete"
     )
-    ein_application: Mapped["EINApplication | None"] = relationship(back_populates="order")  # noqa: F821
-    registered_agent: Mapped["RegisteredAgentService | None"] = relationship(back_populates="order")  # noqa: F821
+    ein_application: Mapped[Optional["EINApplication"]] = relationship(back_populates="order")  # noqa: F821
+    registered_agent: Mapped[Optional["RegisteredAgentService"]] = relationship(back_populates="order")  # noqa: F821
     compliance_tasks: Mapped[list["ComplianceTask"]] = relationship(back_populates="order")  # noqa: F821
 
     __table_args__ = (
@@ -113,10 +116,10 @@ class OrderStatusHistory(Base):
     order_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False, index=True
     )
-    from_status: Mapped[str | None] = mapped_column(String(50))
+    from_status: Mapped[Optional[str]] = mapped_column(String(50))
     to_status: Mapped[str] = mapped_column(String(50), nullable=False)
-    changed_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
-    notes: Mapped[str | None] = mapped_column(Text)
+    changed_by: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True))
+    notes: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

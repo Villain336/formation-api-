@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, timezone
 
@@ -31,13 +34,13 @@ class Member(Base):
     )
     role: Mapped[MemberRole] = mapped_column(SAEnum(MemberRole), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    title: Mapped[str | None] = mapped_column(String(100))  # CEO, President, etc.
-    email: Mapped[str | None] = mapped_column(String(255))
-    phone: Mapped[str | None] = mapped_column(String(50))
-    ssn_last4: Mapped[str | None] = mapped_column(String(4))  # For EIN application
-    ownership_percentage: Mapped[float | None] = mapped_column(Numeric(5, 2))
+    title: Mapped[Optional[str]] = mapped_column(String(100))  # CEO, President, etc.
+    email: Mapped[Optional[str]] = mapped_column(String(255))
+    phone: Mapped[Optional[str]] = mapped_column(String(50))
+    ssn_last4: Mapped[Optional[str]] = mapped_column(String(4))  # For EIN application
+    ownership_percentage: Mapped[Optional[float]] = mapped_column(Numeric(5, 2))
     address_line1: Mapped[str] = mapped_column(String(255), nullable=False)
-    address_line2: Mapped[str | None] = mapped_column(String(255))
+    address_line2: Mapped[Optional[str]] = mapped_column(String(255))
     city: Mapped[str] = mapped_column(String(100), nullable=False)
     state: Mapped[str] = mapped_column(String(2), nullable=False)
     zip_code: Mapped[str] = mapped_column(String(10), nullable=False)

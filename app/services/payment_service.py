@@ -1,5 +1,6 @@
 """Stripe payment integration for formation orders."""
 from __future__ import annotations
+from typing import Optional, List
 
 import uuid
 
@@ -77,7 +78,7 @@ async def create_payment_intent(db: AsyncSession, user: User, order: Order) -> d
     }
 
 
-async def handle_payment_success(db: AsyncSession, payment_intent_id: str) -> Order | None:
+async def handle_payment_success(db: AsyncSession, payment_intent_id: str) -> Optional[Order]:
     """Handle successful payment webhook from Stripe."""
     result = await db.execute(
         select(Payment).where(Payment.stripe_payment_intent_id == payment_intent_id)

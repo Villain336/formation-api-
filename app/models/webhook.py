@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, timezone
 
@@ -35,10 +38,10 @@ class WebhookEvent(Base):
     )
     event_type: Mapped[str] = mapped_column(String(100), nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
-    status_code: Mapped[int | None] = mapped_column(Integer)
+    status_code: Mapped[Optional[int]] = mapped_column(Integer)
     attempts: Mapped[int] = mapped_column(Integer, default=0)
-    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_attempt_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    delivered_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

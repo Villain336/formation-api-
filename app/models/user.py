@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
+from typing import Optional, List
 
 from sqlalchemy import Boolean, DateTime, Integer, String, Text, ForeignKey, Index, JSON
 from sqlalchemy.dialects.postgresql import UUID
@@ -17,11 +18,11 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    phone: Mapped[str | None] = mapped_column(String(50))
-    company_name: Mapped[str | None] = mapped_column(String(255))
+    phone: Mapped[Optional[str]] = mapped_column(String(50))
+    company_name: Mapped[Optional[str]] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    stripe_customer_id: Mapped[str | None] = mapped_column(String(255))
+    stripe_customer_id: Mapped[Optional[str]] = mapped_column(String(255))
     plan: Mapped[str] = mapped_column(String(50), default="free")  # free, starter, growth, enterprise
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -33,8 +34,8 @@ class User(Base):
     )
 
     # Relationships
-    api_keys: Mapped[list["APIKey"]] = relationship(back_populates="user", cascade="all, delete")
-    orders: Mapped[list["Order"]] = relationship(back_populates="user")  # noqa: F821
+    api_keys: Mapped[List["APIKey"]] = relationship(back_populates="user", cascade="all, delete")
+    orders: Mapped[List["Order"]] = relationship(back_populates="user")  # noqa: F821
 
 
 class APIKey(Base):
@@ -47,15 +48,15 @@ class APIKey(Base):
     key_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     key_prefix: Mapped[str] = mapped_column(String(12), nullable=False)  # First 12 chars for display
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    description: Mapped[str | None] = mapped_column(String(500))
+    description: Mapped[Optional[str]] = mapped_column(String(500))
     environment: Mapped[str] = mapped_column(String(10), default="test")  # test or live
-    scopes: Mapped[list | None] = mapped_column(JSON, default=list)  # ["orders:read", "orders:write"]
+    scopes: Mapped[Optional[list]] = mapped_column(JSON, default=list)  # ["orders:read", "orders:write"]
     rate_limit_per_minute: Mapped[int] = mapped_column(Integer, default=60)
     rate_limit_per_day: Mapped[int] = mapped_column(Integer, default=10000)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    last_used_ip: Mapped[str | None] = mapped_column(String(45))
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    last_used_ip: Mapped[Optional[str]] = mapped_column(String(45))
     total_requests: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

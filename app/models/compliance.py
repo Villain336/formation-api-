@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import typing
+from typing import Optional, List
+
 import uuid
 from datetime import datetime, date, timezone
 import enum
@@ -42,8 +45,8 @@ class ComplianceTask(Base):
     state: Mapped[str] = mapped_column(String(2), nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     reminder_sent: Mapped[bool] = mapped_column(Boolean, default=False)
-    filed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    notes: Mapped[str | None] = mapped_column(Text)
+    filed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    notes: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

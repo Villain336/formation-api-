@@ -1,5 +1,6 @@
 """State requirements and entity type endpoints."""
 from __future__ import annotations
+from typing import Optional, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, distinct
@@ -21,8 +22,8 @@ async def list_entity_types(db: AsyncSession = Depends(get_db)):
 
 @router.get("/requirements", response_model=StateListResponse)
 async def list_state_requirements(
-    entity_type: str | None = None,
-    state: str | None = None,
+    entity_type: Optional[str] = None,
+    state: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
 ):
     """List state formation requirements. Filter by entity type and/or state."""
