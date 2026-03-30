@@ -1,0 +1,525 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Use Cases{% endblock %}
+{% block meta_description %}See how platforms, fintechs, and developers use Formation API to automate business formation. Complete code examples for every integration scenario.{% endblock %}
+{% block meta_keywords %}formation api use cases, llc api integration, business formation automation, fintech formation api, white label business formation{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding:4rem 0 3rem;">
+    <div class="container">
+        <h1>Built for Real Products</h1>
+        <p>See exactly how developers integrate Formation API into their platforms. Every example below uses real API calls with actual request and response payloads.</p>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 1: Fintech Onboarding ===================== -->
+<section class="section" id="fintech">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <span class="badge badge--info mb-2">Use Case</span>
+                <h2>Fintech: One-Click Business Account</h2>
+                <p class="text-muted mb-3">A neobank wants to let users form an LLC and open a business bank account in a single onboarding flow. The user enters their info once, and your platform handles formation, EIN, and account setup.</p>
+
+                <h4>The User Sees</h4>
+                <ol style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li style="margin-bottom:.5rem;">User enters name, address, business name on your signup page</li>
+                    <li style="margin-bottom:.5rem;">User picks LLC type and state (default: Wyoming for low fees)</li>
+                    <li style="margin-bottom:.5rem;">User pays a single fee (your markup + state fee)</li>
+                    <li style="margin-bottom:.5rem;">Your backend creates the order via Formation API</li>
+                    <li style="margin-bottom:.5rem;">User gets updates: "LLC filed", "EIN received", "Account ready"</li>
+                    <li style="margin-bottom:.5rem;">Business bank account is opened using the EIN and filed documents</li>
+                </ol>
+
+                <h4>What Happens Behind the Scenes</h4>
+                <p class="text-muted">Your server makes 3 API calls: create order, process payment, set up webhook. Formation API handles the rest &mdash; filing, EIN, registered agent, document generation, and compliance tracking.</p>
+            </div>
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">your-backend/onboarding.py</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code><span style="color:#7dd3fc">import</span> httpx
+
+FORMATION_API = <span style="color:#fde68a">"https://api.formation.dev/api/v1"</span>
+API_KEY = <span style="color:#fde68a">"form_live_sk_..."</span>
+HEADERS = {<span style="color:#fde68a">"X-API-Key"</span>: API_KEY}
+
+<span style="color:#7dd3fc">async def</span> <span style="color:#86efac">onboard_business_customer</span>(user_data):
+    <span style="color:#94a3b8"># Step 1: Create formation order</span>
+    order = httpx.post(
+        f<span style="color:#fde68a">"{FORMATION_API}/orders"</span>,
+        headers=HEADERS,
+        json={
+            <span style="color:#fde68a">"entity_type"</span>: <span style="color:#fde68a">"llc"</span>,
+            <span style="color:#fde68a">"state_of_formation"</span>: <span style="color:#fde68a">"WY"</span>,
+            <span style="color:#fde68a">"business_name"</span>: user_data[<span style="color:#fde68a">"business_name"</span>],
+            <span style="color:#fde68a">"business_address_line1"</span>: user_data[<span style="color:#fde68a">"address"</span>],
+            <span style="color:#fde68a">"business_city"</span>: user_data[<span style="color:#fde68a">"city"</span>],
+            <span style="color:#fde68a">"business_state"</span>: user_data[<span style="color:#fde68a">"state"</span>],
+            <span style="color:#fde68a">"business_zip"</span>: user_data[<span style="color:#fde68a">"zip"</span>],
+            <span style="color:#fde68a">"include_registered_agent"</span>: True,
+            <span style="color:#fde68a">"include_ein"</span>: True,
+            <span style="color:#fde68a">"members"</span>: [{
+                <span style="color:#fde68a">"role"</span>: <span style="color:#fde68a">"owner"</span>,
+                <span style="color:#fde68a">"full_name"</span>: user_data[<span style="color:#fde68a">"name"</span>],
+                <span style="color:#fde68a">"email"</span>: user_data[<span style="color:#fde68a">"email"</span>],
+                <span style="color:#fde68a">"ownership_percentage"</span>: 100,
+                <span style="color:#fde68a">"address_line1"</span>: user_data[<span style="color:#fde68a">"address"</span>],
+                <span style="color:#fde68a">"city"</span>: user_data[<span style="color:#fde68a">"city"</span>],
+                <span style="color:#fde68a">"state"</span>: user_data[<span style="color:#fde68a">"state"</span>],
+                <span style="color:#fde68a">"zip_code"</span>: user_data[<span style="color:#fde68a">"zip"</span>],
+            }],
+        },
+    ).json()
+
+    <span style="color:#94a3b8"># Step 2: Create payment intent</span>
+    payment = httpx.post(
+        f<span style="color:#fde68a">"{FORMATION_API}/payments/create-intent"</span>,
+        headers=HEADERS,
+        json={<span style="color:#fde68a">"order_id"</span>: order[<span style="color:#fde68a">"id"</span>]},
+    ).json()
+
+    <span style="color:#94a3b8"># Step 3: Return to your frontend</span>
+    <span style="color:#7dd3fc">return</span> {
+        <span style="color:#fde68a">"order_id"</span>: order[<span style="color:#fde68a">"id"</span>],
+        <span style="color:#fde68a">"total"</span>: order[<span style="color:#fde68a">"total_amount"</span>],
+        <span style="color:#fde68a">"stripe_secret"</span>: payment[<span style="color:#fde68a">"client_secret"</span>],
+    }</code></pre>
+                </div>
+
+                <div class="code-block" style="margin-top:1rem;">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Response: Order Created</span></div>
+<pre><code>{
+  <span style="color:#7dd3fc">"id"</span>: <span style="color:#fde68a">"a1b2c3d4-..."</span>,
+  <span style="color:#7dd3fc">"order_number"</span>: <span style="color:#fde68a">"FORM-2026-K9M2X7"</span>,
+  <span style="color:#7dd3fc">"status"</span>: <span style="color:#fde68a">"draft"</span>,
+  <span style="color:#7dd3fc">"entity_type"</span>: <span style="color:#fde68a">"llc"</span>,
+  <span style="color:#7dd3fc">"state_of_formation"</span>: <span style="color:#fde68a">"WY"</span>,
+  <span style="color:#7dd3fc">"business_name"</span>: <span style="color:#fde68a">"Acme Ventures LLC"</span>,
+  <span style="color:#7dd3fc">"state_fee"</span>: 10000,
+  <span style="color:#7dd3fc">"service_fee"</span>: 14900,
+  <span style="color:#7dd3fc">"registered_agent_fee"</span>: 9900,
+  <span style="color:#7dd3fc">"total_amount"</span>: 42700,
+  <span style="color:#94a3b8">// $427.00 = $100 WY fee + $149 service
+  // + $99 registered agent + $79 EIN</span>
+  <span style="color:#7dd3fc">"members"</span>: [{
+    <span style="color:#7dd3fc">"role"</span>: <span style="color:#fde68a">"owner"</span>,
+    <span style="color:#7dd3fc">"full_name"</span>: <span style="color:#fde68a">"Jane Smith"</span>
+  }]
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 2: Multi-member LLC ===================== -->
+<section class="section section--alt" id="multi-member">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Multi-Member LLC with Operating Agreement</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_type": "llc",
+    "state_of_formation": "DE",
+    "business_name": "Smith & Jones Consulting LLC",
+    "business_purpose": "Management consulting",
+    "business_address_line1": "100 Market St",
+    "business_city": "Wilmington",
+    "business_state": "DE",
+    "business_zip": "19801",
+    "include_registered_agent": true,
+    "include_ein": true,
+    "include_operating_agreement": true,
+    "members": [
+      {
+        "role": "manager",
+        "full_name": "Sarah Smith",
+        "title": "Managing Member",
+        "email": "sarah@smithjones.com",
+        "ownership_percentage": 60,
+        "address_line1": "200 Park Ave",
+        "city": "New York",
+        "state": "NY",
+        "zip_code": "10001"
+      },
+      {
+        "role": "member",
+        "full_name": "Tom Jones",
+        "email": "tom@smithjones.com",
+        "ownership_percentage": 40,
+        "address_line1": "500 Elm St",
+        "city": "Austin",
+        "state": "TX",
+        "zip_code": "78701"
+      }
+    ]
+  }'</code></pre>
+                </div>
+                <div class="code-block" style="margin-top:1rem;">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Response</span></div>
+<pre><code>{
+  "order_number": "FORM-2026-R4T8W2",
+  "status": "draft",
+  "business_name": "Smith & Jones Consulting LLC",
+  "state_fee": 9000,
+  "service_fee": 18800,
+  "registered_agent_fee": 9900,
+  "total_amount": 45600,
+  <span style="color:#94a3b8">// $456 = $90 DE + $149 service + $79 EIN
+  // + $39 operating agreement + $99 RA</span>
+  "members": [
+    {"role": "manager", "full_name": "Sarah Smith",
+     "ownership_percentage": 60.0},
+    {"role": "member", "full_name": "Tom Jones",
+     "ownership_percentage": 40.0}
+  ]
+}</code></pre>
+                </div>
+            </div>
+            <div>
+                <span class="badge badge--success mb-2">Use Case</span>
+                <h2>Multi-Member LLC with Custom Ownership</h2>
+                <p class="text-muted mb-3">A legal tech platform helps business partners form an LLC together. Two members with different ownership splits, one designated as managing member.</p>
+
+                <h4>The User Sees</h4>
+                <ol style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li style="margin-bottom:.5rem;">Form asks "How many owners?" and collects each person's info</li>
+                    <li style="margin-bottom:.5rem;">Users set ownership percentages (must total 100%)</li>
+                    <li style="margin-bottom:.5rem;">One member is designated as the managing member</li>
+                    <li style="margin-bottom:.5rem;">Operating agreement is auto-generated with the ownership split</li>
+                    <li style="margin-bottom:.5rem;">Both members receive copies of all documents</li>
+                </ol>
+
+                <h4>What Gets Generated</h4>
+                <ul style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li>Certificate of Formation (filed with Delaware)</li>
+                    <li>Operating Agreement with 60/40 ownership split</li>
+                    <li>EIN confirmation letter from the IRS</li>
+                    <li>Registered agent designation</li>
+                </ul>
+
+                <div class="alert alert--info">
+                    <strong>Tip:</strong> The <code>include_operating_agreement: true</code> flag auto-generates a state-compliant operating agreement using the member data you provide. It includes the ownership percentages, management structure, and dissolution terms.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 3: Webhook-Driven Status Updates ===================== -->
+<section class="section" id="webhooks">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <span class="badge badge--warning mb-2">Use Case</span>
+                <h2>Webhook-Driven Status Updates</h2>
+                <p class="text-muted mb-3">Instead of polling, your platform receives real-time updates as the formation progresses. This is how you keep your users informed without constant API calls.</p>
+
+                <h4>The Timeline Your User Sees</h4>
+                <table style="margin:1rem 0;">
+                    <thead><tr><th>Time</th><th>Event</th><th>User Notification</th></tr></thead>
+                    <tbody>
+                        <tr><td>T+0</td><td><code>order.created</code></td><td>"Order submitted!"</td></tr>
+                        <tr><td>T+0</td><td><code>payment.succeeded</code></td><td>"Payment confirmed"</td></tr>
+                        <tr><td>T+1h</td><td><code>order.processing</code></td><td>"Filing in progress"</td></tr>
+                        <tr><td>T+3d</td><td><code>order.filed</code></td><td>"LLC filed with state!"</td></tr>
+                        <tr><td>T+5d</td><td><code>ein.received</code></td><td>"EIN received: 87-1234567"</td></tr>
+                        <tr><td>T+5d</td><td><code>order.completed</code></td><td>"Everything's ready!"</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>Step 1: Register Your Webhook</h4>
+                <p class="text-muted">You only do this once. Tell us where to send events.</p>
+            </div>
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Register Webhook</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/webhooks/endpoints \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://yourapp.com/webhooks/formation",
+    "events": [
+      "order.status_changed",
+      "payment.succeeded",
+      "ein.received",
+      "order.completed"
+    ]
+  }'
+
+<span style="color:#94a3b8"># Response includes a signing secret:</span>
+{
+  "id": "wh_abc123",
+  "url": "https://yourapp.com/webhooks/formation",
+  "secret": "whsec_a1b2c3d4e5f6...",
+  "events": ["order.status_changed", ...]
+}</code></pre>
+                </div>
+                <div class="code-block" style="margin-top:1rem;">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">your-backend/webhook_handler.py</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code><span style="color:#7dd3fc">from</span> fastapi <span style="color:#7dd3fc">import</span> Request
+<span style="color:#7dd3fc">import</span> hmac, hashlib
+
+WEBHOOK_SECRET = <span style="color:#fde68a">"whsec_a1b2c3d4e5f6..."</span>
+
+@app.post(<span style="color:#fde68a">"/webhooks/formation"</span>)
+<span style="color:#7dd3fc">async def</span> <span style="color:#86efac">handle_webhook</span>(request: Request):
+    body = <span style="color:#7dd3fc">await</span> request.body()
+    sig = request.headers[<span style="color:#fde68a">"X-Formation-Signature"</span>]
+
+    <span style="color:#94a3b8"># Verify signature</span>
+    expected = hmac.new(
+        WEBHOOK_SECRET.encode(),
+        body, hashlib.sha256
+    ).hexdigest()
+    <span style="color:#7dd3fc">if</span> sig != expected:
+        <span style="color:#7dd3fc">return</span> {<span style="color:#fde68a">"error"</span>: <span style="color:#fde68a">"Invalid signature"</span>}
+
+    event = <span style="color:#7dd3fc">await</span> request.json()
+
+    <span style="color:#7dd3fc">if</span> event[<span style="color:#fde68a">"type"</span>] == <span style="color:#fde68a">"order.completed"</span>:
+        order_id = event[<span style="color:#fde68a">"data"</span>][<span style="color:#fde68a">"order_id"</span>]
+        <span style="color:#94a3b8"># Notify your user, open bank account, etc.</span>
+        send_email(order_id, <span style="color:#fde68a">"Your LLC is ready!"</span>)
+
+    <span style="color:#7dd3fc">if</span> event[<span style="color:#fde68a">"type"</span>] == <span style="color:#fde68a">"ein.received"</span>:
+        ein = event[<span style="color:#fde68a">"data"</span>][<span style="color:#fde68a">"ein_number"</span>]
+        <span style="color:#94a3b8"># Auto-open bank account with EIN</span>
+        open_bank_account(ein)
+
+    <span style="color:#7dd3fc">return</span> {<span style="color:#fde68a">"received"</span>: True}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 4: Delaware C-Corp for Startups ===================== -->
+<section class="section section--alt" id="startup">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Delaware C-Corp for Fundraising</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_type": "corporation",
+    "state_of_formation": "DE",
+    "business_name": "TechCo Inc.",
+    "business_purpose": "Develop and sell software",
+    "business_address_line1": "500 Startup Blvd",
+    "business_city": "San Francisco",
+    "business_state": "CA",
+    "business_zip": "94107",
+    "processing_speed": "expedited",
+    "include_registered_agent": true,
+    "include_ein": true,
+    "members": [
+      {
+        "role": "incorporator",
+        "full_name": "Alex Chen",
+        "title": "CEO",
+        "address_line1": "500 Startup Blvd",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "role": "director",
+        "full_name": "Alex Chen",
+        "title": "Director",
+        "address_line1": "500 Startup Blvd",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip_code": "94107"
+      }
+    ]
+  }'</code></pre>
+                </div>
+            </div>
+            <div>
+                <span class="badge badge--neutral mb-2">Use Case</span>
+                <h2>Startup Accelerator: Delaware C-Corp</h2>
+                <p class="text-muted mb-3">An accelerator forms Delaware C-Corps for every company in their cohort. Expedited processing to get entities ready before Demo Day.</p>
+
+                <h4>Why Delaware C-Corp?</h4>
+                <ul style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li>Required by most VCs and investors</li>
+                    <li>Well-established corporate law (Court of Chancery)</li>
+                    <li>Stock issuance structure for equity fundraising</li>
+                    <li>Standard for Y Combinator, Techstars, etc.</li>
+                </ul>
+
+                <h4>Accelerator Batch Formation</h4>
+                <p class="text-muted">With the API, you can form 20 companies in a single script. Each takes one POST request. Use <code>processing_speed: "expedited"</code> for 24-hour filing in Delaware.</p>
+
+                <div class="alert alert--info">
+                    <strong>Volume pricing:</strong> Growth plan gets $99/formation service fee. Enterprise gets custom pricing from $49/formation. Contact sales for accelerator partnerships.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 5: International Founder ===================== -->
+<section class="section" id="international">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <span class="badge badge--error mb-2">Use Case</span>
+                <h2>International Founder: US Entity from Abroad</h2>
+                <p class="text-muted mb-3">An immigration services platform helps non-US founders form US entities. The registered agent is critical here &mdash; the founder has no US address.</p>
+
+                <h4>What the International User Needs</h4>
+                <ul style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li><strong>Registered agent</strong> &mdash; required legal address in the formation state</li>
+                    <li><strong>EIN</strong> &mdash; needed for US bank account and tax filings</li>
+                    <li><strong>Operating agreement</strong> &mdash; proves ownership structure</li>
+                    <li><strong>Certificate of formation</strong> &mdash; proof the entity exists</li>
+                </ul>
+
+                <h4>Why Wyoming?</h4>
+                <p class="text-muted">No state income tax, low filing fees ($100), strong privacy protections (no public member disclosure), and simple annual report ($60). This is the #1 choice for non-US founders forming LLCs.</p>
+
+                <div class="alert alert--warning">
+                    <strong>Compliance note:</strong> Non-US founders still need an ITIN or SSN for the responsible party on the EIN application. The Formation API's EIN service handles this workflow, including SS-4 form preparation.
+                </div>
+            </div>
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Form US LLC for International Founder</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_type": "llc",
+    "state_of_formation": "WY",
+    "business_name": "Global Ventures LLC",
+    "business_address_line1": "1712 Pioneer Ave",
+    "business_city": "Cheyenne",
+    "business_state": "WY",
+    "business_zip": "82001",
+    "include_registered_agent": true,
+    "include_ein": true,
+    "include_operating_agreement": true,
+    "members": [
+      {
+        "role": "owner",
+        "full_name": "Carlos Rodriguez",
+        "email": "carlos@globalventures.io",
+        "ownership_percentage": 100,
+        "address_line1": "Calle Gran Via 42",
+        "city": "Madrid",
+        "state": "MD",
+        "zip_code": "28013",
+        "country": "ES"
+      }
+    ]
+  }'</code></pre>
+                </div>
+                <div class="code-block" style="margin-top:1rem;">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Total Cost Breakdown</span></div>
+<pre><code>{
+  "state_fee": 10000,       <span style="color:#94a3b8">// $100 WY filing</span>
+  "service_fee": 26800,     <span style="color:#94a3b8">// $149 + $79 EIN + $39 OA</span>
+  "registered_agent_fee": 9900,  <span style="color:#94a3b8">// $99/year</span>
+  "total_amount": 46700,    <span style="color:#94a3b8">// $467 total</span>
+  "breakdown": {
+    "state_filing_fee": 10000,
+    "formation_service_fee": 14900,
+    "registered_agent_first_year": 9900,
+    "ein_service": 7900,
+    "operating_agreement": 3900
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== USE CASE 6: Compliance Monitoring ===================== -->
+<section class="section section--alt" id="compliance">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start;gap:3rem;">
+            <div>
+                <div class="code-block">
+                    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Check Compliance Tasks</span></div>
+                    <button class="code-block__copy">Copy</button>
+<pre><code><span style="color:#94a3b8"># List upcoming compliance tasks</span>
+curl https://api.formation.dev/api/v1/compliance \
+  -H "X-API-Key: form_live_sk_..."
+
+<span style="color:#94a3b8"># Response</span>
+{
+  "tasks": [
+    {
+      "task_type": "annual_report",
+      "status": "upcoming",
+      "due_date": "2027-06-01",
+      "state": "DE",
+      "description": "Annual report for Acme LLC in DE"
+    },
+    {
+      "task_type": "franchise_tax",
+      "status": "due",
+      "due_date": "2027-03-01",
+      "state": "DE",
+      "description": "Franchise tax ($300) due for Acme LLC"
+    },
+    {
+      "task_type": "boi_report",
+      "status": "due",
+      "due_date": "2026-09-28",
+      "state": "DE",
+      "description": "BOI report due to FinCEN for Acme LLC"
+    }
+  ]
+}</code></pre>
+                </div>
+            </div>
+            <div>
+                <span class="badge badge--success mb-2">Use Case</span>
+                <h2>Accounting Platform: Compliance Dashboard</h2>
+                <p class="text-muted mb-3">An accounting SaaS pulls compliance data from Formation API to show their users upcoming deadlines &mdash; annual reports, franchise taxes, and FinCEN BOI reports.</p>
+
+                <h4>Auto-Created Compliance Tasks</h4>
+                <p class="text-muted">When a formation order completes, Formation API automatically creates all relevant compliance tasks based on the state and entity type:</p>
+                <ul style="color:var(--text-secondary);margin-bottom:1.5rem;">
+                    <li><strong>Annual Reports</strong> &mdash; due dates vary by state (some by anniversary, some by calendar)</li>
+                    <li><strong>Franchise Tax</strong> &mdash; Delaware ($300 LLC), California ($800 minimum), etc.</li>
+                    <li><strong>Publication</strong> &mdash; New York requires 6-week newspaper publication</li>
+                    <li><strong>BOI Report</strong> &mdash; FinCEN Beneficial Ownership report (90 days after formation)</li>
+                </ul>
+
+                <h4>Your Dashboard Shows</h4>
+                <p class="text-muted">Pull the <code>/compliance</code> endpoint and display upcoming deadlines. Filter by status: <code>upcoming</code>, <code>due</code>, <code>overdue</code>, <code>filed</code>.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section">
+    <div class="container text-center">
+        <h2>Ready to Build?</h2>
+        <p class="text-muted" style="max-width:500px;margin:1rem auto 2rem;">Get your free API keys and start testing these flows in under 5 minutes. Full sandbox access, no credit card required.</p>
+        <div class="hero__cta">
+            <a href="/signup" class="btn btn--primary btn--lg">Create Free Account</a>
+            <a href="/docs/quickstart" class="btn btn--outline btn--lg">Quickstart Guide</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

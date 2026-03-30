@@ -1,0 +1,265 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}Integration Guide{% endblock %}
+{% block meta_description %}Complete guide to integrating Formation API. Full request/response examples for every API endpoint, error handling, webhook setup, and production best practices.{% endblock %}
+
+{% block docs_content %}
+<h1>Integration Guide</h1>
+<p>This guide walks you through every step of a real integration. Every code example shows actual request payloads and the exact responses you'll get back.</p>
+
+<div class="alert alert--info">
+    <strong>Base URL:</strong> <code>https://api.formation.dev/api/v1</code><br>
+    All requests must include either a <code>Authorization: Bearer &lt;jwt&gt;</code> header or an <code>X-API-Key: form_live_sk_...</code> header.
+</div>
+
+<h2 id="pricing">Understanding the Pricing Flow</h2>
+<p>Before creating an order, you can get an exact price quote. This is useful for showing your users the total cost before they commit.</p>
+
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto"><span class="method method--post">POST</span> /orders/pricing</span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST "https://api.formation.dev/api/v1/orders/pricing?\
+entity_type=llc&\
+state=DE&\
+processing_speed=standard&\
+include_registered_agent=true&\
+include_ein=true&\
+include_operating_agreement=false"</code></pre>
+</div>
+
+<div class="code-block" style="margin-top:.5rem;">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Response: 200 OK</span></div>
+<pre><code>{
+  "state_fee": 9000,
+  "service_fee": 22800,
+  "expedited_fee": 0,
+  "registered_agent_fee": 9900,
+  "total_amount": 41700,
+  "currency": "usd",
+  "breakdown": {
+    "state_filing_fee": 9000,
+    "formation_service_fee": 14900,
+    "state_expedited_fee": 0,
+    "registered_agent_first_year": 9900,
+    "ein_service": 7900,
+    "operating_agreement": 0
+  }
+}</code></pre>
+</div>
+<p>All amounts are in <strong>cents</strong>. Divide by 100 to get dollars. So <code>41700</code> = <strong>$417.00</strong>.</p>
+
+<h2 id="complete-flow">Complete Order Flow</h2>
+<p>Here's the full lifecycle of a formation order, from creation to completion.</p>
+
+<h3>1. Create the Order</h3>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto"><span class="method method--post">POST</span> /orders</span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_type": "llc",
+    "state_of_formation": "DE",
+    "business_name": "Acme Ventures LLC",
+    "business_purpose": "Technology consulting",
+    "business_address_line1": "123 Main St",
+    "business_city": "Wilmington",
+    "business_state": "DE",
+    "business_zip": "19801",
+    "processing_speed": "standard",
+    "include_registered_agent": true,
+    "include_ein": true,
+    "include_operating_agreement": true,
+    "members": [{
+      "role": "owner",
+      "full_name": "Jane Doe",
+      "email": "jane@acme.com",
+      "ownership_percentage": 100,
+      "address_line1": "456 Oak Ave",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip_code": "94102"
+    }]
+  }'</code></pre>
+</div>
+
+<div class="code-block" style="margin-top:.5rem;">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Response: 201 Created</span></div>
+<pre><code>{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "order_number": "FORM-2026-A7X9K2",
+  "status": "draft",
+  "entity_type": "llc",
+  "state_of_formation": "DE",
+  "business_name": "Acme Ventures LLC",
+  "business_purpose": "Technology consulting",
+  "business_address_line1": "123 Main St",
+  "business_city": "Wilmington",
+  "business_state": "DE",
+  "business_zip": "19801",
+  "processing_speed": "standard",
+  "include_registered_agent": true,
+  "include_ein": true,
+  "include_operating_agreement": true,
+  "state_fee": 9000,
+  "service_fee": 22800,
+  "expedited_fee": 0,
+  "registered_agent_fee": 9900,
+  "total_amount": 41700,
+  "state_filing_number": null,
+  "filed_at": null,
+  "members": [{
+    "id": "m1m2m3m4-...",
+    "role": "owner",
+    "full_name": "Jane Doe",
+    "ownership_percentage": 100.0,
+    "city": "San Francisco",
+    "state": "CA"
+  }],
+  "created_at": "2026-03-30T12:00:00Z",
+  "updated_at": "2026-03-30T12:00:00Z"
+}</code></pre>
+</div>
+<p>The order is created in <code>draft</code> status. Save the <code>id</code> for the next step.</p>
+
+<h3>2. Process Payment</h3>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto"><span class="method method--post">POST</span> /payments/create-intent</span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/payments/create-intent \
+  -H "X-API-Key: form_live_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"order_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"}'</code></pre>
+</div>
+
+<div class="code-block" style="margin-top:.5rem;">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Response: 200 OK</span></div>
+<pre><code>{
+  "client_secret": "pi_3abc123_secret_xyz789",
+  "payment_intent_id": "pi_3abc123",
+  "amount": 41700,
+  "currency": "usd"
+}</code></pre>
+</div>
+<p>Use the <code>client_secret</code> with <a href="https://stripe.com/docs/js">Stripe.js</a> on your frontend to complete the payment. When Stripe confirms the payment, our webhook handler automatically moves the order to <code>paid</code> status.</p>
+
+<h4>Frontend Payment (Stripe.js)</h4>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">your-frontend/checkout.js</span></div>
+<pre><code>const stripe = Stripe('pk_live_your_publishable_key');
+const { error } = await stripe.confirmPayment({
+  clientSecret: 'pi_3abc123_secret_xyz789',
+  confirmParams: {
+    return_url: 'https://yourapp.com/order/confirmed',
+  },
+});</code></pre>
+</div>
+
+<h3>3. Track Order Status</h3>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto"><span class="method method--get">GET</span> /orders/:id</span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl https://api.formation.dev/api/v1/orders/a1b2c3d4-... \
+  -H "X-API-Key: form_live_sk_..."</code></pre>
+</div>
+<p>The <code>status</code> field progresses through:</p>
+<pre><code>draft → pending_payment → paid → processing → filed → completed</code></pre>
+
+<h3>4. Download Documents</h3>
+<p>Once the order reaches <code>filed</code> or <code>completed</code>, documents become available:</p>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto"><span class="method method--get">GET</span> /documents/:order_id</span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl https://api.formation.dev/api/v1/documents/a1b2c3d4-.../files \
+  -H "X-API-Key: form_live_sk_..."
+
+{
+  "documents": [
+    {
+      "doc_type": "articles_of_organization",
+      "filename": "Acme_Ventures_LLC_Articles.pdf",
+      "download_url": "/documents/doc_abc/download"
+    },
+    {
+      "doc_type": "operating_agreement",
+      "filename": "Acme_Ventures_LLC_Operating_Agreement.pdf",
+      "download_url": "/documents/doc_def/download"
+    },
+    {
+      "doc_type": "ein_confirmation",
+      "filename": "EIN_Confirmation_87-1234567.pdf",
+      "download_url": "/documents/doc_ghi/download"
+    }
+  ]
+}</code></pre>
+</div>
+
+<h2 id="error-handling">Error Handling</h2>
+<p>Formation API returns consistent error responses:</p>
+
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto">Error Responses</span></div>
+<pre><code><span style="color:#94a3b8">// 400 Bad Request - Invalid input</span>
+{
+  "detail": "Formation of llc is not available in XX"
+}
+
+<span style="color:#94a3b8">// 401 Unauthorized - Bad or missing API key</span>
+{
+  "detail": "Invalid authentication credentials"
+}
+
+<span style="color:#94a3b8">// 404 Not Found - Resource doesn't exist</span>
+{
+  "detail": "Order not found"
+}
+
+<span style="color:#94a3b8">// 422 Validation Error - Missing required fields</span>
+{
+  "detail": [
+    {
+      "loc": ["body", "business_name"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}</code></pre>
+</div>
+
+<h2 id="environments">Test vs Live</h2>
+<table>
+    <thead><tr><th>Feature</th><th>Test Mode</th><th>Live Mode</th></tr></thead>
+    <tbody>
+        <tr><td>API key prefix</td><td><code>form_test_sk_...</code></td><td><code>form_live_sk_...</code></td></tr>
+        <tr><td>Real state filings</td><td>No (simulated)</td><td>Yes</td></tr>
+        <tr><td>Stripe charges</td><td>Test mode</td><td>Real charges</td></tr>
+        <tr><td>Documents generated</td><td>Watermarked "SAMPLE"</td><td>Production-ready</td></tr>
+        <tr><td>Webhooks fired</td><td>Yes (to your endpoint)</td><td>Yes</td></tr>
+        <tr><td>Rate limits</td><td>60/min</td><td>Per plan</td></tr>
+    </tbody>
+</table>
+
+<h2 id="production-checklist">Production Checklist</h2>
+<p>Before going live, verify:</p>
+<ul>
+    <li>Switch from <code>form_test_</code> to <code>form_live_</code> API keys</li>
+    <li>Set up webhook endpoint with signature verification</li>
+    <li>Store API keys in environment variables (never in code)</li>
+    <li>Configure Stripe with your live publishable/secret keys</li>
+    <li>Set appropriate API key scopes (principle of least privilege)</li>
+    <li>Enable key expiration (90 days recommended) and set up rotation</li>
+    <li>Handle all error status codes gracefully in your UI</li>
+    <li>Add retry logic with exponential backoff for 5xx errors</li>
+    <li>Test the complete flow end-to-end in test mode first</li>
+    <li>Review the <a href="/docs/compliance-guide">Compliance Guide</a> for legal requirements</li>
+</ul>
+
+<h2 id="next">Next Steps</h2>
+<ul>
+    <li><a href="/use-cases">Use Cases</a> &mdash; Real-world integration scenarios with complete code</li>
+    <li><a href="/docs/authentication">Authentication Guide</a> &mdash; API key scopes, rotation, and security</li>
+    <li><a href="/docs/api-reference">Full API Reference</a> &mdash; Every endpoint with schemas</li>
+    <li><a href="/docs/security">Security Best Practices</a> &mdash; Secure your integration</li>
+</ul>
+{% endblock %}

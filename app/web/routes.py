@@ -34,6 +34,11 @@ async def pricing(request: Request):
     return templates.TemplateResponse("web/pages/pricing.html", _ctx(request))
 
 
+@router.get("/use-cases", response_class=HTMLResponse, include_in_schema=False)
+async def use_cases(request: Request):
+    return templates.TemplateResponse("web/pages/use_cases.html", _ctx(request))
+
+
 @router.get("/login", response_class=HTMLResponse, include_in_schema=False)
 async def login_page(request: Request):
     return templates.TemplateResponse("web/pages/login.html", _ctx(request))
@@ -61,6 +66,11 @@ async def docs_quickstart(request: Request):
 @router.get("/docs/authentication", response_class=HTMLResponse, include_in_schema=False)
 async def docs_authentication(request: Request):
     return templates.TemplateResponse("web/docs/authentication.html", _ctx(request))
+
+
+@router.get("/docs/integration-guide", response_class=HTMLResponse, include_in_schema=False)
+async def docs_integration_guide(request: Request):
+    return templates.TemplateResponse("web/docs/integration_guide.html", _ctx(request))
 
 
 @router.get("/docs/api-keys", response_class=HTMLResponse, include_in_schema=False)
