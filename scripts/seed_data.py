@@ -613,7 +613,7 @@ async def main():
     # Create all tables first
     from app.db.base import Base
     from app.db.session import engine
-    from app.models import *  # noqa: F401,F403 - register all models
+    import app.models  # noqa: F401 - register all models
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
