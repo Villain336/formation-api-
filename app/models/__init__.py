@@ -8,6 +8,7 @@ from app.models.payment import Payment, Subscription
 from app.models.document import Document
 from app.models.webhook import WebhookEndpoint, WebhookEvent
 from app.models.compliance import ComplianceTask
+from app.models.filing import FilingSubmission, FilingStatusLog
 
 __all__ = [
     "User",
@@ -25,4 +26,6 @@ __all__ = [
     "WebhookEndpoint",
     "WebhookEvent",
     "ComplianceTask",
+    "FilingSubmission",
+    "FilingStatusLog",
 ]
