@@ -1,4 +1,5 @@
 """Order management endpoints: create, read, update, name check, pricing."""
+from __future__ import annotations
 
 import uuid
 

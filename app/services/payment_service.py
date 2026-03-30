@@ -1,4 +1,5 @@
 """Stripe payment integration for formation orders."""
+from __future__ import annotations
 
 import uuid
 

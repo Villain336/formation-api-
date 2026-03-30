@@ -1,4 +1,5 @@
 """Authentication endpoints: register, login, API key management."""
+from __future__ import annotations
 
 import uuid
 from datetime import datetime, timedelta, timezone

@@ -1,4 +1,5 @@
 """Admin endpoints for managing orders, users, and system operations."""
+from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone

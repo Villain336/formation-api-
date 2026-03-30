@@ -1,4 +1,5 @@
 """State requirements and entity type endpoints."""
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, distinct

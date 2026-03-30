@@ -1,4 +1,5 @@
 """Webhook management endpoints."""
+from __future__ import annotations
 
 import secrets
 import uuid
