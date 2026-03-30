@@ -1,6 +1,6 @@
 """Compliance tracking endpoints."""
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 
@@ -18,7 +18,7 @@ from app.schemas.compliance import ComplianceTaskResponse, ComplianceTaskUpdate
 router = APIRouter()
 
 
-@router.get("/tasks", response_model=list[ComplianceTaskResponse])
+@router.get("/tasks", response_model=List[ComplianceTaskResponse])
 async def list_compliance_tasks(
     status: Optional[ComplianceStatus] = None,
     current_user: User = Depends(get_current_user),

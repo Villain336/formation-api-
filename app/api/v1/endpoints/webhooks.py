@@ -1,5 +1,6 @@
 """Webhook management endpoints."""
 from __future__ import annotations
+from typing import List
 
 import secrets
 import uuid
@@ -60,7 +61,7 @@ async def create_webhook_endpoint(
     )
 
 
-@router.get("/endpoints", response_model=list[WebhookEndpointResponse])
+@router.get("/endpoints", response_model=List[WebhookEndpointResponse])
 async def list_webhook_endpoints(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -98,7 +99,7 @@ async def delete_webhook_endpoint(
     await db.flush()
 
 
-@router.get("/events", response_model=list[WebhookEventResponse])
+@router.get("/events", response_model=List[WebhookEventResponse])
 async def list_webhook_events(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),

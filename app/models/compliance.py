@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import typing
-from typing import Optional, List
+from typing import Optional
 
 import uuid
 from datetime import datetime, date, timezone

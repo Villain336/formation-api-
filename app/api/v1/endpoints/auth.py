@@ -1,5 +1,6 @@
 """Authentication endpoints: register, login, API key management."""
 from __future__ import annotations
+from typing import List
 
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -165,7 +166,7 @@ async def create_api_key(
     )
 
 
-@router.get("/api-keys", response_model=list[APIKeyResponse])
+@router.get("/api-keys", response_model=List[APIKeyResponse])
 async def list_api_keys(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),

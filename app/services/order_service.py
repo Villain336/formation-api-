@@ -1,6 +1,6 @@
 """Order creation and management service."""
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional, Tuple
 
 import uuid
 from datetime import datetime, date, timezone
@@ -104,7 +104,7 @@ async def list_orders(
     status: Optional[OrderStatus] = None,
     page: int = 1,
     per_page: int = 20,
-) -> tuple[list[Order], int]:
+) -> Tuple[List[Order], int]:
     """List orders for a user with pagination."""
     query = (
         select(Order)

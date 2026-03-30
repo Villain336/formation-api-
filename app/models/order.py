@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import typing
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 from datetime import datetime, timezone
@@ -93,15 +92,15 @@ class Order(Base):
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="orders")  # noqa: F821
-    members: Mapped[list["Member"]] = relationship(back_populates="order", cascade="all, delete")  # noqa: F821
-    documents: Mapped[list["Document"]] = relationship(back_populates="order")  # noqa: F821
-    payments: Mapped[list["Payment"]] = relationship(back_populates="order")  # noqa: F821
-    status_history: Mapped[list["OrderStatusHistory"]] = relationship(
+    members: Mapped[List["Member"]] = relationship(back_populates="order", cascade="all, delete")  # noqa: F821
+    documents: Mapped[List["Document"]] = relationship(back_populates="order")  # noqa: F821
+    payments: Mapped[List["Payment"]] = relationship(back_populates="order")  # noqa: F821
+    status_history: Mapped[List["OrderStatusHistory"]] = relationship(
         back_populates="order", cascade="all, delete"
     )
     ein_application: Mapped[Optional["EINApplication"]] = relationship(back_populates="order")  # noqa: F821
     registered_agent: Mapped[Optional["RegisteredAgentService"]] = relationship(back_populates="order")  # noqa: F821
-    compliance_tasks: Mapped[list["ComplianceTask"]] = relationship(back_populates="order")  # noqa: F821
+    compliance_tasks: Mapped[List["ComplianceTask"]] = relationship(back_populates="order")  # noqa: F821
 
     __table_args__ = (
         Index("ix_orders_user_status", "user_id", "status"),

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 from datetime import datetime
@@ -25,7 +25,7 @@ class OrderCreate(BaseModel):
     include_registered_agent: bool = True
     include_ein: bool = False
     include_operating_agreement: bool = False
-    members: list[MemberCreate] = Field(default_factory=list)
+    members: List[MemberCreate] = Field(default_factory=list)
 
 
 class OrderUpdate(BaseModel):
@@ -72,7 +72,7 @@ class OrderResponse(BaseModel):
     filed_at: Optional[datetime]
     effective_date: Optional[datetime]
     rejection_reason: Optional[str]
-    members: list[MemberResponse] = []
+    members: List[MemberResponse] = []
     created_at: datetime
     updated_at: datetime
 
@@ -80,7 +80,7 @@ class OrderResponse(BaseModel):
 
 
 class OrderListResponse(BaseModel):
-    orders: list[OrderResponse]
+    orders: List[OrderResponse]
     total: int
     page: int
     per_page: int
@@ -113,5 +113,5 @@ class NameCheckResponse(BaseModel):
     available: bool
     business_name: str
     state: str
-    suggestions: list[str] = []
+    suggestions: List[str] = []
     naming_rules: Optional[dict] = None

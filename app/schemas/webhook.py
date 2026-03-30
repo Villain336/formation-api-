@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 from datetime import datetime
@@ -8,14 +8,14 @@ from pydantic import BaseModel
 
 class WebhookEndpointCreate(BaseModel):
     url: str
-    events: list[str]  # ["order.status_changed", "order.completed", "ein.received"]
+    events: List[str]  # ["order.status_changed", "order.completed", "ein.received"]
 
 
 class WebhookEndpointResponse(BaseModel):
     id: uuid.UUID
     url: str
     secret: Optional[str] = None  # Only on creation
-    events: list[str]
+    events: List[str]
     is_active: bool
     created_at: datetime
 

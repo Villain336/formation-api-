@@ -1,6 +1,6 @@
 """State requirements and entity type endpoints."""
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, distinct
@@ -13,7 +13,7 @@ from app.schemas.entity import EntityTypeResponse, StateRequirementResponse, Sta
 router = APIRouter()
 
 
-@router.get("/entity-types", response_model=list[EntityTypeResponse])
+@router.get("/entity-types", response_model=List[EntityTypeResponse])
 async def list_entity_types(db: AsyncSession = Depends(get_db)):
     """List all supported entity types."""
     result = await db.execute(select(EntityType).where(EntityType.is_active.is_(True)))
@@ -64,7 +64,7 @@ async def get_state_requirement(
     return StateRequirementResponse.model_validate(req)
 
 
-@router.get("/available-states", response_model=list[str])
+@router.get("/available-states", response_model=List[str])
 async def list_available_states(
     entity_type: str = Query(default="llc"),
     db: AsyncSession = Depends(get_db),

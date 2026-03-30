@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 from datetime import datetime
@@ -48,7 +48,7 @@ class APIKeyCreate(BaseModel):
     name: str
     description: Optional[str] = None
     environment: str = "test"  # test or live
-    scopes: list[str] = []  # ["orders:read", "orders:write", "states:read"]
+    scopes: List[str] = []  # ["orders:read", "orders:write", "states:read"]
     rate_limit_per_minute: int = 60
     expires_in_days: Optional[int] = None  # None = no expiry
 
@@ -60,7 +60,7 @@ class APIKeyResponse(BaseModel):
     key: Optional[str] = None  # Only returned on creation
     key_prefix: str
     environment: str
-    scopes: list[str]
+    scopes: List[str]
     rate_limit_per_minute: int
     rate_limit_per_day: int
     is_active: bool

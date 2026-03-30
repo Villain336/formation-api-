@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List
+from typing import List, Optional
 
 import uuid
 from pydantic import BaseModel
@@ -43,5 +43,5 @@ class StateRequirementResponse(BaseModel):
 
 
 class StateListResponse(BaseModel):
-    states: list[StateRequirementResponse]
+    states: List[StateRequirementResponse]
     total: int
