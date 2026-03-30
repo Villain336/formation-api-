@@ -610,6 +610,15 @@ async def seed_state_requirements(session):
 
 
 async def main():
+    # Create all tables first
+    from app.db.base import Base
+    from app.db.session import engine
+    from app.models import *  # noqa: F401,F403 - register all models
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Tables created.")
+
     async with async_session() as session:
         await seed_entity_types(session)
         await seed_state_requirements(session)
