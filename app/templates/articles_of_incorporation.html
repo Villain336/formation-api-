@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Articles of Incorporation - {{ business_name }}</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 5px; }
+        h2 { text-align: center; font-size: 18px; font-weight: normal; }
+        .article { margin: 20px 0; }
+        .article-title { font-weight: bold; text-decoration: underline; }
+        .signature-block { margin-top: 60px; }
+        .signature-line { border-top: 1px solid #000; width: 300px; margin-top: 40px; padding-top: 5px; }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1>CERTIFICATE OF INCORPORATION</h1>
+        <h2>OF</h2>
+        <h1>{{ business_name }}</h1>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE I - NAME</p>
+        <p>The name of the Corporation is <strong>{{ business_name }}</strong>.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE II - REGISTERED OFFICE AND AGENT</p>
+        <p>The address of the registered office of the Corporation in the State of {{ state }} is {{ address_line1 }}, {{ city }}, {{ state_code }} {{ zip_code }}.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE III - PURPOSE</p>
+        <p>{{ purpose }}</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE IV - AUTHORIZED SHARES</p>
+        <p>The total number of shares of stock which the Corporation shall have authority to issue is {{ "{:,}".format(shares_authorized) }} shares of Common Stock, with a par value of ${{ par_value }} per share.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE V - INCORPORATOR</p>
+        {% if incorporator %}
+        <p>The name and address of the incorporator is:</p>
+        <p>{{ incorporator.full_name }}<br>
+        {{ incorporator.address_line1 }}, {{ incorporator.city }}, {{ incorporator.state }} {{ incorporator.zip_code }}</p>
+        {% endif %}
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE VI - DIRECTORS</p>
+        {% if directors|length > 0 %}
+        <p>The initial Board of Directors shall consist of {{ directors|length }} director(s):</p>
+        <ul>
+            {% for director in directors %}
+            <li>{{ director.full_name }}{% if director.title %} - {{ director.title }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>The number of directors shall be fixed by the Bylaws of the Corporation.</p>
+        {% endif %}
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE VII - LIABILITY LIMITATION</p>
+        <p>To the fullest extent permitted by law, no director of the Corporation shall be personally liable to the Corporation or its stockholders for monetary damages for breach of fiduciary duty as a director.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE VIII - INDEMNIFICATION</p>
+        <p>The Corporation shall indemnify any person who is or was a director or officer to the fullest extent permitted by the laws of {{ state }}.</p>
+    </div>
+
+    <div class="signature-block">
+        <p>IN WITNESS WHEREOF, the undersigned incorporator has executed these Articles of Incorporation on {{ date }}.</p>
+        {% if incorporator %}
+        <div class="signature-line">
+            {{ incorporator.full_name }}, Incorporator
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

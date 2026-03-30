@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Articles of Organization - {{ business_name }}</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 5px; }
+        h2 { text-align: center; font-size: 18px; font-weight: normal; margin-top: 5px; }
+        .article { margin: 20px 0; }
+        .article-title { font-weight: bold; text-decoration: underline; }
+        .signature-block { margin-top: 60px; }
+        .signature-line { border-top: 1px solid #000; width: 300px; margin-top: 40px; padding-top: 5px; }
+        .header { text-align: center; margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ARTICLES OF ORGANIZATION</h1>
+        <h2>OF</h2>
+        <h1>{{ business_name }}</h1>
+        <p>A {{ state }} Limited Liability Company</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE I - NAME</p>
+        <p>The name of the Limited Liability Company is <strong>{{ business_name }}</strong>.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE II - PURPOSE</p>
+        <p>{{ purpose }}</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE III - PRINCIPAL OFFICE</p>
+        <p>The principal office of the Company shall be located at:</p>
+        <p>{{ address_line1 }}{% if address_line2 %}, {{ address_line2 }}{% endif %}<br>
+        {{ city }}, {{ state_code }} {{ zip_code }}</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE IV - REGISTERED AGENT</p>
+        {% if organizer %}
+        <p>The registered agent for service of process is {{ organizer.full_name }}, located at
+        {{ organizer.address_line1 }}, {{ organizer.city }}, {{ organizer.state }} {{ organizer.zip_code }}.</p>
+        {% else %}
+        <p>The registered agent shall be designated separately in accordance with state requirements.</p>
+        {% endif %}
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE V - MANAGEMENT</p>
+        {% if managers|length > 0 %}
+        <p>The Company shall be managed by its {% if managers|length == 1 %}member{% else %}managers{% endif %}:</p>
+        <ul>
+            {% for manager in managers %}
+            <li>{{ manager.full_name }}{% if manager.title %} - {{ manager.title }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>The Company shall be member-managed.</p>
+        {% endif %}
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE VI - DURATION</p>
+        <p>The Company shall have perpetual duration unless dissolved in accordance with the Operating Agreement or applicable law.</p>
+    </div>
+
+    <div class="article">
+        <p class="article-title">ARTICLE VII - MEMBERS</p>
+        {% if members|length > 0 %}
+        <ul>
+            {% for member in members %}
+            <li>{{ member.full_name }} - {{ member.role.value|title }}{% if member.ownership_percentage %} ({{ member.ownership_percentage }}%){% endif %}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <div class="signature-block">
+        <p>IN WITNESS WHEREOF, the undersigned has executed these Articles of Organization on {{ date }}.</p>
+        {% if organizer %}
+        <div class="signature-line">
+            {{ organizer.full_name }}, Organizer
+        </div>
+        {% elif managers|length > 0 %}
+        <div class="signature-line">
+            {{ managers[0].full_name }}, Authorized Person
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
