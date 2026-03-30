@@ -1,0 +1,56 @@
+{% extends "web/layouts/base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <div class="docs-sidebar__section">
+                <div class="docs-sidebar__title">Getting Started</div>
+                <a href="/docs">Overview</a>
+                <a href="/docs/quickstart">Quickstart Guide</a>
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/docs/api-keys">API Key Management</a>
+                <a href="/docs/environments">Test &amp; Live Modes</a>
+            </div>
+            <div class="docs-sidebar__section">
+                <div class="docs-sidebar__title">Core Concepts</div>
+                <a href="/docs/entities">Entity Types</a>
+                <a href="/docs/states">State Requirements</a>
+                <a href="/docs/orders">Formation Orders</a>
+                <a href="/docs/order-lifecycle">Order Lifecycle</a>
+                <a href="/docs/pricing-fees">Pricing &amp; Fees</a>
+            </div>
+            <div class="docs-sidebar__section">
+                <div class="docs-sidebar__title">API Reference</div>
+                <a href="/docs/api-reference">Overview</a>
+                <a href="/docs/api-reference#auth">Authentication</a>
+                <a href="/docs/api-reference#orders">Orders</a>
+                <a href="/docs/api-reference#states">States</a>
+                <a href="/docs/api-reference#payments">Payments</a>
+                <a href="/docs/api-reference#documents">Documents</a>
+                <a href="/docs/api-reference#webhooks">Webhooks</a>
+                <a href="/docs/api-reference#compliance">Compliance</a>
+                <a href="/docs/api-reference#admin">Admin</a>
+            </div>
+            <div class="docs-sidebar__section">
+                <div class="docs-sidebar__title">Guides</div>
+                <a href="/docs/webhooks">Webhook Integration</a>
+                <a href="/docs/sdks">SDKs &amp; Libraries</a>
+                <a href="/docs/errors">Error Handling</a>
+                <a href="/docs/rate-limits">Rate Limits</a>
+                <a href="/docs/idempotency">Idempotency</a>
+            </div>
+            <div class="docs-sidebar__section">
+                <div class="docs-sidebar__title">Security &amp; Compliance</div>
+                <a href="/docs/security">Security Best Practices</a>
+                <a href="/docs/compliance-guide">Compliance Guide</a>
+                <a href="/docs/data-handling">Data Handling</a>
+                <a href="/docs/pci-compliance">PCI Compliance</a>
+            </div>
+        </aside>
+        <div class="docs-content">
+            {% block docs_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

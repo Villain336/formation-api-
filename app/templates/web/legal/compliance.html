@@ -1,0 +1,94 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Compliance{% endblock %}
+{% block meta_description %}Formation API regulatory compliance. How we meet state and federal requirements for business formation services, data handling, and privacy regulations.{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:3rem;">
+    <div class="container" style="max-width:800px;">
+        <h1>Regulatory Compliance</h1>
+        <p class="text-muted">How Formation API meets legal and regulatory requirements for business formation services.</p>
+
+        <h2>Our Compliance Approach</h2>
+        <p>Business formation involves regulated activities across 50 US states plus federal requirements. We maintain compliance through a combination of legal review, technology controls, and operational procedures.</p>
+
+        <h2>State Formation Compliance</h2>
+
+        <h3>Filing Accuracy</h3>
+        <ul>
+            <li>Formation documents are generated from state-approved templates reviewed by attorneys in each jurisdiction</li>
+            <li>State naming rules (required suffixes, restricted words) are validated before submission</li>
+            <li>Required fields are enforced per state requirements</li>
+            <li>Filing fees are set to the exact amount published by each state's Secretary of State</li>
+        </ul>
+
+        <h3>State-Specific Requirements</h3>
+        <ul>
+            <li><strong>Publication states (NY, AZ, NE, PA):</strong> We flag publication requirements and create compliance tracking tasks automatically</li>
+            <li><strong>Initial report states:</strong> Automatic reminders for states requiring initial reports within a specific timeframe</li>
+            <li><strong>Registered agent requirements:</strong> All states require a registered agent. We validate this requirement is met for every formation</li>
+        </ul>
+
+        <h2>Federal Compliance</h2>
+
+        <h3>FinCEN Beneficial Ownership Information (BOI)</h3>
+        <ul>
+            <li>Compliance tasks for BOI filing are automatically created for all new formations</li>
+            <li>90-day deadline tracking from formation date</li>
+            <li>Customer notifications before the deadline</li>
+        </ul>
+
+        <h3>IRS Requirements</h3>
+        <ul>
+            <li>EIN applications are submitted in compliance with IRS procedures</li>
+            <li>We store only the last 4 digits of SSN/ITIN as required for EIN applications</li>
+            <li>Full SSN is transmitted to the IRS only during the application process and is not retained</li>
+        </ul>
+
+        <h2>Data Protection Compliance</h2>
+
+        <h3>CCPA (California Consumer Privacy Act)</h3>
+        <ul>
+            <li>Right to know: Users can request a copy of all personal data we hold</li>
+            <li>Right to delete: Users can request deletion (subject to legal retention requirements)</li>
+            <li>No sale of personal information: We never sell personal data</li>
+            <li>Non-discrimination: No service degradation for exercising privacy rights</li>
+        </ul>
+
+        <h3>Data Minimization</h3>
+        <ul>
+            <li>We collect only the data necessary for formation filings</li>
+            <li>SSN data is limited to last 4 digits and encrypted</li>
+            <li>Payment data is processed entirely by Stripe</li>
+            <li>Data retention follows legal minimums</li>
+        </ul>
+
+        <h2>Payment Compliance</h2>
+        <ul>
+            <li><strong>PCI DSS:</strong> Payment processing through Stripe (PCI DSS Level 1). We qualify as SAQ-A (no cardholder data touches our systems)</li>
+            <li><strong>Fee transparency:</strong> State fees are itemized separately from service fees. No hidden markups.</li>
+            <li><strong>Refund policy:</strong> Clearly stated. State fees non-refundable once submitted; service fees refundable for unsubmitted orders.</li>
+        </ul>
+
+        <h2>Not a Law Firm Disclosure</h2>
+        <p>Formation API, Inc. is a technology company that provides business formation document filing services. We are not a law firm and do not provide legal advice. This is disclosed:</p>
+        <ul>
+            <li>In our Terms of Service</li>
+            <li>On all formation-related pages</li>
+            <li>In API response metadata where applicable</li>
+            <li>In generated documents where appropriate</li>
+        </ul>
+
+        <h2>Audit and Reporting</h2>
+        <ul>
+            <li>SOC 2 Type II audit in progress (available for Enterprise customers upon request)</li>
+            <li>Annual security assessments by third-party firms</li>
+            <li>Automated compliance monitoring for all active formations</li>
+            <li>Monthly compliance reporting available for Enterprise customers</li>
+        </ul>
+
+        <h2>Questions</h2>
+        <p>For compliance-related questions, contact <a href="mailto:compliance@formation.dev">compliance@formation.dev</a>.</p>
+    </div>
+</section>
+{% endblock %}

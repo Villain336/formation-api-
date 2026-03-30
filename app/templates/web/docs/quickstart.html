@@ -1,0 +1,136 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}Quickstart Guide{% endblock %}
+{% block meta_description %}Get started with Formation API in 5 minutes. Create your account, get API keys, and submit your first business formation order.{% endblock %}
+
+{% block docs_content %}
+<h1>Quickstart Guide</h1>
+<p>This guide walks you through creating your first business formation order in under 5 minutes.</p>
+
+<h2>Step 1: Create an Account</h2>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "developer@example.com",
+    "password": "secure-password-here",
+    "full_name": "Jane Developer",
+    "company_name": "Acme Platforms Inc"
+  }'</code></pre>
+</div>
+<p>You'll receive a JWT access token and your user profile in the response. Save the <code>access_token</code>.</p>
+
+<h2>Step 2: Create an API Key</h2>
+<p>API keys are recommended for server-to-server communication. They support scopes, rate limits, and environment separation.</p>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Development Key",
+    "environment": "test",
+    "scopes": ["orders:read", "orders:write", "states:read"]
+  }'</code></pre>
+</div>
+
+<div class="alert alert--warning">
+    <strong>Important:</strong> The full API key is only shown once at creation time. Copy and store it securely. You will not be able to retrieve it later.
+</div>
+
+<h2>Step 3: Check State Requirements</h2>
+<p>Before creating an order, check the requirements for your desired state and entity type:</p>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl https://api.formation.dev/api/v1/states/DE/llc \
+  -H "X-API-Key: form_test_sk_..."</code></pre>
+</div>
+<p>Response includes filing fees, processing times, naming rules, and required documents.</p>
+
+<h2>Step 4: Check Name Availability</h2>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders/name-check \
+  -H "X-API-Key: form_test_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "business_name": "Acme Ventures LLC",
+    "state": "DE",
+    "entity_type": "llc"
+  }'</code></pre>
+</div>
+
+<h2>Step 5: Create a Formation Order</h2>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/orders \
+  -H "X-API-Key: form_test_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_type": "llc",
+    "state_of_formation": "DE",
+    "business_name": "Acme Ventures LLC",
+    "business_purpose": "Technology consulting and software development",
+    "business_address_line1": "123 Innovation Way",
+    "business_city": "Wilmington",
+    "business_state": "DE",
+    "business_zip": "19801",
+    "processing_speed": "standard",
+    "include_registered_agent": true,
+    "include_ein": true,
+    "include_operating_agreement": true,
+    "members": [
+      {
+        "role": "owner",
+        "full_name": "Jane Doe",
+        "email": "jane@acmeventures.com",
+        "ownership_percentage": 100,
+        "address_line1": "456 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip_code": "94105"
+      }
+    ]
+  }'</code></pre>
+</div>
+<p>The order is created in <code>draft</code> status. The response includes the calculated pricing breakdown.</p>
+
+<h2>Step 6: Process Payment</h2>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl -X POST https://api.formation.dev/api/v1/payments/create-intent \
+  -H "X-API-Key: form_test_sk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"order_id": "ORDER_ID_FROM_STEP_5"}'</code></pre>
+</div>
+<p>You'll receive a Stripe <code>client_secret</code> to complete payment on the frontend using Stripe.js.</p>
+
+<h2>Step 7: Track Order Status</h2>
+<p>Poll the order endpoint or set up webhooks:</p>
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span></div>
+    <button class="code-block__copy">Copy</button>
+<pre><code>curl https://api.formation.dev/api/v1/orders/ORDER_ID \
+  -H "X-API-Key: form_test_sk_..."</code></pre>
+</div>
+
+<h2>Order Status Flow</h2>
+<pre><code>draft → pending_payment → paid → processing → filed → completed
+                                     ↓
+                                  rejected → processing (retry)</code></pre>
+
+<h2>Next Steps</h2>
+<ul>
+    <li><a href="/docs/authentication">Authentication deep dive</a> &mdash; Learn about scopes, key rotation, and security</li>
+    <li><a href="/docs/webhooks">Webhook integration</a> &mdash; Get real-time status updates</li>
+    <li><a href="/docs/api-reference">Full API reference</a> &mdash; All endpoints with examples</li>
+    <li><a href="/docs/security">Security best practices</a> &mdash; Secure your integration</li>
+</ul>
+{% endblock %}

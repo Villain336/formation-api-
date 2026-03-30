@@ -1,0 +1,157 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Pricing{% endblock %}
+{% block meta_description %}Formation API pricing plans. Free tier for testing, Starter at $49/mo, Growth at $199/mo, and Enterprise plans. Pay only for what you use. No hidden fees.{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding:4rem 0 3rem;">
+    <div class="container">
+        <h1>Simple, Transparent Pricing</h1>
+        <p>Start free, scale as you grow. All plans include full API access in test mode. State filing fees are passed through at cost.</p>
+    </div>
+</section>
+
+<section class="section" style="padding-top:2rem;">
+    <div class="container">
+        <div class="grid grid-4" style="align-items:start;">
+            <!-- Free -->
+            <div class="card pricing-card">
+                <h3>Free</h3>
+                <p class="text-muted" style="font-size:.9rem;">For testing and development</p>
+                <div class="price">$0<span>/month</span></div>
+                <ul>
+                    <li>Full test mode access</li>
+                    <li>2 API keys</li>
+                    <li>All entity types</li>
+                    <li>All 50 states data</li>
+                    <li>60 requests/minute</li>
+                    <li>Community support</li>
+                    <li>OpenAPI spec access</li>
+                </ul>
+                <a href="/signup" class="btn btn--outline">Start Free</a>
+            </div>
+
+            <!-- Starter -->
+            <div class="card pricing-card">
+                <h3>Starter</h3>
+                <p class="text-muted" style="font-size:.9rem;">For early-stage products</p>
+                <div class="price">$49<span>/month</span></div>
+                <ul>
+                    <li>Everything in Free</li>
+                    <li>Live API access</li>
+                    <li>10 API keys</li>
+                    <li>50 formations/month</li>
+                    <li>120 requests/minute</li>
+                    <li>Document generation</li>
+                    <li>Webhook notifications</li>
+                    <li>Email support (48h SLA)</li>
+                </ul>
+                <a href="/signup?plan=starter" class="btn btn--primary">Get Started</a>
+            </div>
+
+            <!-- Growth -->
+            <div class="card pricing-card card--featured">
+                <h3>Growth</h3>
+                <p class="text-muted" style="font-size:.9rem;">For scaling businesses</p>
+                <div class="price">$199<span>/month</span></div>
+                <ul>
+                    <li>Everything in Starter</li>
+                    <li>50 API keys</li>
+                    <li>500 formations/month</li>
+                    <li>300 requests/minute</li>
+                    <li>Registered agent service</li>
+                    <li>EIN service</li>
+                    <li>Compliance tracking</li>
+                    <li>Priority support (24h SLA)</li>
+                    <li>Custom webhooks</li>
+                </ul>
+                <a href="/signup?plan=growth" class="btn btn--primary">Get Started</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="card pricing-card">
+                <h3>Enterprise</h3>
+                <p class="text-muted" style="font-size:.9rem;">For high-volume platforms</p>
+                <div class="price">Custom</div>
+                <ul>
+                    <li>Everything in Growth</li>
+                    <li>200+ API keys</li>
+                    <li>Unlimited formations</li>
+                    <li>Custom rate limits</li>
+                    <li>White-label documents</li>
+                    <li>Dedicated account manager</li>
+                    <li>Custom SLA (99.99%)</li>
+                    <li>SOC 2 compliance report</li>
+                    <li>Custom integrations</li>
+                </ul>
+                <a href="/contact?plan=enterprise" class="btn btn--dark">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- State Fees -->
+<section class="section section--alt">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2>State Filing Fees</h2>
+            <p class="text-muted" style="max-width:600px;margin:1rem auto 0;">State filing fees are passed through at cost &mdash; we never mark them up. These are the fees charged by each state's Secretary of State.</p>
+        </div>
+        <div class="alert alert--info">
+            <strong>Transparent pricing:</strong> You pay our platform fee + the actual state filing fee. We do not add any markup to state fees. Your customers see the exact same fees they'd pay filing directly.
+        </div>
+        <div class="grid grid-2">
+            <div class="card">
+                <h4 class="card__title">Service Fees</h4>
+                <table style="margin-top:1rem;">
+                    <tr><td>Standard formation</td><td style="text-align:right"><strong>$149</strong></td></tr>
+                    <tr><td>Expedited processing</td><td style="text-align:right"><strong>$249</strong></td></tr>
+                    <tr><td>Rush processing</td><td style="text-align:right"><strong>$349</strong></td></tr>
+                    <tr><td>Registered agent (annual)</td><td style="text-align:right"><strong>$99</strong></td></tr>
+                    <tr><td>EIN service</td><td style="text-align:right"><strong>$79</strong></td></tr>
+                    <tr><td>Operating agreement</td><td style="text-align:right"><strong>$39</strong></td></tr>
+                </table>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Popular State Filing Fees</h4>
+                <table style="margin-top:1rem;">
+                    <tr><td>Delaware LLC</td><td style="text-align:right"><strong>$90</strong></td></tr>
+                    <tr><td>Wyoming LLC</td><td style="text-align:right"><strong>$100</strong></td></tr>
+                    <tr><td>California LLC</td><td style="text-align:right"><strong>$70</strong></td></tr>
+                    <tr><td>Texas LLC</td><td style="text-align:right"><strong>$300</strong></td></tr>
+                    <tr><td>Florida LLC</td><td style="text-align:right"><strong>$125</strong></td></tr>
+                    <tr><td>New York LLC</td><td style="text-align:right"><strong>$200</strong></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+    <div class="container" style="max-width:800px;">
+        <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+
+        <div class="card" style="margin-bottom:1rem;">
+            <h4 class="card__title">Do I need a paid plan to test the API?</h4>
+            <p class="card__text">No. The Free plan gives you full access to test mode with all API endpoints, entity types, and states. You only need a paid plan when you're ready to submit real formations.</p>
+        </div>
+        <div class="card" style="margin-bottom:1rem;">
+            <h4 class="card__title">Are state filing fees included in the platform fee?</h4>
+            <p class="card__text">No, state fees are separate and charged at cost. We pass through the exact fee charged by each state with zero markup. Your total cost = platform fee + state fee.</p>
+        </div>
+        <div class="card" style="margin-bottom:1rem;">
+            <h4 class="card__title">Can I white-label the formation service?</h4>
+            <p class="card__text">Yes. On Growth and Enterprise plans, all documents and communications can be branded with your company's identity. Your customers never see our brand.</p>
+        </div>
+        <div class="card" style="margin-bottom:1rem;">
+            <h4 class="card__title">What happens if I exceed my plan's formation limit?</h4>
+            <p class="card__text">We won't cut you off. Overages are billed at a per-formation rate: $5/formation on Starter, $3/formation on Growth. Enterprise plans have no limits.</p>
+        </div>
+        <div class="card" style="margin-bottom:1rem;">
+            <h4 class="card__title">Is there a long-term contract?</h4>
+            <p class="card__text">No. All plans are month-to-month. Annual billing gets a 20% discount. Enterprise plans can be customized with annual contracts.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

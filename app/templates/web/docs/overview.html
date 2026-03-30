@@ -1,0 +1,88 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}Documentation{% endblock %}
+{% block meta_description %}Formation API documentation. Learn how to integrate business formation into your platform with our REST API. Quickstart guides, API reference, and best practices.{% endblock %}
+
+{% block docs_content %}
+<h1>Formation API Documentation</h1>
+<p>Welcome to the Formation API documentation. This guide covers everything you need to integrate business formation into your platform.</p>
+
+<div class="alert alert--info">
+    <strong>Base URL:</strong> <code>https://api.formation.dev/api/v1</code><br>
+    All API requests require authentication via JWT bearer token or API key.
+</div>
+
+<h2>Quick Links</h2>
+<div class="grid grid-2" style="margin:1.5rem 0;">
+    <div class="card">
+        <h4 class="card__title"><a href="/docs/quickstart">Quickstart Guide</a></h4>
+        <p class="card__text">Get up and running in 5 minutes. Create your first LLC formation order.</p>
+    </div>
+    <div class="card">
+        <h4 class="card__title"><a href="/docs/authentication">Authentication</a></h4>
+        <p class="card__text">Learn about JWT tokens, API keys, scopes, and security best practices.</p>
+    </div>
+    <div class="card">
+        <h4 class="card__title"><a href="/docs/api-reference">API Reference</a></h4>
+        <p class="card__text">Complete reference for all endpoints with request/response examples.</p>
+    </div>
+    <div class="card">
+        <h4 class="card__title"><a href="/docs/webhooks">Webhooks</a></h4>
+        <p class="card__text">Set up real-time notifications for order status changes and events.</p>
+    </div>
+</div>
+
+<h2>How It Works</h2>
+<p>The Formation API follows a straightforward workflow:</p>
+<ol>
+    <li><strong>Check state requirements</strong> &mdash; Query the states endpoint to get filing fees, processing times, and requirements for a specific state and entity type.</li>
+    <li><strong>Check name availability</strong> &mdash; Verify the business name meets state naming rules and isn't restricted.</li>
+    <li><strong>Create a formation order</strong> &mdash; Submit the business details, members/officers, and desired options.</li>
+    <li><strong>Process payment</strong> &mdash; Create a Stripe payment intent and process the state filing fee + service fee.</li>
+    <li><strong>Track the order</strong> &mdash; Monitor order status via API polling or webhook notifications as it moves through: draft &rarr; paid &rarr; processing &rarr; filed &rarr; completed.</li>
+    <li><strong>Download documents</strong> &mdash; Retrieve generated and filed documents (Articles, Operating Agreement, EIN confirmation).</li>
+    <li><strong>Manage compliance</strong> &mdash; Track upcoming compliance deadlines (annual reports, franchise taxes, etc.).</li>
+</ol>
+
+<h2>Entity Types Supported</h2>
+<table>
+    <thead><tr><th>Type</th><th>API Value</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td>LLC</td><td><code>llc</code></td><td>Limited Liability Company &mdash; most popular for small businesses</td></tr>
+        <tr><td>C Corporation</td><td><code>corporation</code></td><td>Standard corporation for raising investment capital</td></tr>
+        <tr><td>S Corporation</td><td><code>s_corp</code></td><td>Corporation with pass-through tax election</td></tr>
+        <tr><td>Nonprofit</td><td><code>nonprofit</code></td><td>501(c)(3) eligible nonprofit corporation</td></tr>
+        <tr><td>Limited Partnership</td><td><code>lp</code></td><td>Partnership with general and limited partners</td></tr>
+        <tr><td>LLP</td><td><code>llp</code></td><td>Limited liability partnership for professional services</td></tr>
+    </tbody>
+</table>
+
+<h2>Authentication Methods</h2>
+<p>The API supports two authentication methods:</p>
+
+<h3>1. JWT Bearer Token (for user-facing apps)</h3>
+<div class="code-block">
+<pre><code>curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
+     https://api.formation.dev/api/v1/orders</code></pre>
+</div>
+
+<h3>2. API Key (for server-to-server)</h3>
+<div class="code-block">
+<pre><code>curl -H "X-API-Key: form_live_sk_a1b2c3d4..." \
+     https://api.formation.dev/api/v1/orders</code></pre>
+</div>
+
+<p>See the <a href="/docs/authentication">Authentication guide</a> for detailed setup instructions.</p>
+
+<h2>Rate Limits</h2>
+<table>
+    <thead><tr><th>Plan</th><th>Requests/Minute</th><th>Requests/Day</th></tr></thead>
+    <tbody>
+        <tr><td>Free</td><td>60</td><td>1,000</td></tr>
+        <tr><td>Starter</td><td>120</td><td>10,000</td></tr>
+        <tr><td>Growth</td><td>300</td><td>50,000</td></tr>
+        <tr><td>Enterprise</td><td>Custom</td><td>Custom</td></tr>
+    </tbody>
+</table>
+<p>Rate limit headers are included in every response: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, <code>X-RateLimit-Reset</code>.</p>
+{% endblock %}

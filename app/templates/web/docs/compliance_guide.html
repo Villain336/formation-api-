@@ -1,0 +1,170 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}Compliance Guide{% endblock %}
+{% block meta_description %}Formation API compliance guide. Understand legal requirements for business formation services, state regulations, FinCEN BOI reporting, and how to deliver formation products compliantly.{% endblock %}
+
+{% block docs_content %}
+<h1>Compliance Guide</h1>
+<p>This guide covers the legal and regulatory requirements for offering business formation services through the Formation API. Understanding these requirements is essential for operating a compliant formation platform.</p>
+
+<div class="alert alert--warning">
+    <strong>Disclaimer:</strong> This guide is for informational purposes only and does not constitute legal advice. Consult with a licensed attorney in your jurisdiction for specific legal requirements applicable to your business.
+</div>
+
+<h2>Who Needs to Read This</h2>
+<p>If you're building a platform that offers business formation to end customers, you need to understand:</p>
+<ul>
+    <li>What you're legally allowed to do (and what requires a law license)</li>
+    <li>How to properly disclose your services</li>
+    <li>What data you must collect and protect</li>
+    <li>Ongoing compliance obligations for formed entities</li>
+</ul>
+
+<h2>Legal Framework for Formation Services</h2>
+
+<h3>What Is and Isn't "Practicing Law"</h3>
+<p>Business formation services generally fall into two categories:</p>
+<table>
+    <thead><tr><th>Permitted (Non-Legal)</th><th>Requires Attorney</th></tr></thead>
+    <tbody>
+        <tr><td>Filing state formation documents</td><td>Providing legal advice on entity selection</td></tr>
+        <tr><td>Transmitting documents to the state</td><td>Drafting custom legal documents</td></tr>
+        <tr><td>Providing factual information about requirements</td><td>Interpreting laws for specific situations</td></tr>
+        <tr><td>Generating standard-form documents from templates</td><td>Representing clients before state agencies</td></tr>
+        <tr><td>Tracking compliance deadlines</td><td>Tax planning and structuring advice</td></tr>
+    </tbody>
+</table>
+
+<div class="alert alert--info">
+    <strong>Formation API provides:</strong> Document filing, template-based document generation, factual state requirement data, and compliance tracking. We do not provide legal advice. Your platform should include appropriate disclaimers.
+</div>
+
+<h3>Required Disclosures</h3>
+<p>Your platform must clearly disclose:</p>
+<ol>
+    <li><strong>"We are not a law firm."</strong> &mdash; Required in most states. Clearly state that you provide document filing services, not legal advice.</li>
+    <li><strong>"This is not legal advice."</strong> &mdash; On all pages where formation information is presented.</li>
+    <li><strong>Fee transparency</strong> &mdash; Clearly break down state fees vs. service fees. Never bundle them deceptively.</li>
+    <li><strong>Processing times</strong> &mdash; State actual state processing times. Don't promise faster than the state can deliver.</li>
+    <li><strong>Refund policy</strong> &mdash; State filing fees are non-refundable once submitted. Your service fee refund policy must be clearly stated.</li>
+</ol>
+
+<h2>Data Collection Requirements</h2>
+
+<h3>What You Must Collect</h3>
+<p>State formation filings require specific information. The Formation API validates these per-state:</p>
+<ul>
+    <li><strong>Entity name</strong> (must comply with state naming rules)</li>
+    <li><strong>Registered agent</strong> name and address (required in all states)</li>
+    <li><strong>Principal office address</strong></li>
+    <li><strong>Member/manager/director names and addresses</strong></li>
+    <li><strong>Organizer/incorporator information</strong></li>
+    <li><strong>Business purpose</strong> (some states require specific language)</li>
+</ul>
+
+<h3>For EIN Applications</h3>
+<ul>
+    <li><strong>Responsible party name</strong></li>
+    <li><strong>Responsible party SSN or ITIN</strong> (we only store last 4 digits)</li>
+    <li><strong>Entity name and type</strong></li>
+    <li><strong>Formation state and date</strong></li>
+</ul>
+
+<h3>Data Protection Requirements</h3>
+<ul>
+    <li><strong>SSN/ITIN:</strong> Collect only the minimum necessary (last 4 digits). Never store full SSNs unless absolutely required. Encrypt at rest.</li>
+    <li><strong>PII:</strong> Names, addresses, phone numbers, emails must be stored securely with access controls.</li>
+    <li><strong>Financial data:</strong> Use Stripe for all payment processing. Never handle credit card numbers directly.</li>
+    <li><strong>Retention:</strong> Keep formation records for at least 7 years (IRS requirement). Allow users to request data deletion for non-essential data.</li>
+</ul>
+
+<h2>FinCEN Beneficial Ownership Information (BOI)</h2>
+<p>Since January 2024, most newly formed entities must file a BOI report with FinCEN within 90 days of formation.</p>
+
+<h3>What Your Platform Should Do</h3>
+<ol>
+    <li><strong>Inform customers</strong> about the BOI requirement at the time of formation.</li>
+    <li><strong>Track the deadline</strong> &mdash; Formation API automatically creates a compliance task.</li>
+    <li><strong>Provide filing assistance</strong> or direct customers to the FinCEN filing system.</li>
+</ol>
+
+<h3>BOI Exemptions</h3>
+<p>Not all entities need to file. Exempt entities include: publicly traded companies, entities with 20+ employees and $5M+ revenue, banks, credit unions, and certain regulated entities.</p>
+
+<h2>State-Specific Compliance Requirements</h2>
+
+<h3>Publication Requirement States</h3>
+<table>
+    <thead><tr><th>State</th><th>Requirement</th><th>Deadline</th><th>Estimated Cost</th></tr></thead>
+    <tbody>
+        <tr><td>New York</td><td>Publish in 2 newspapers for 6 consecutive weeks</td><td>120 days after formation</td><td>$300 - $2,000+</td></tr>
+        <tr><td>Arizona</td><td>Publish in 1 newspaper for 3 consecutive weeks</td><td>60 days after formation</td><td>$100 - $300</td></tr>
+        <tr><td>Nebraska</td><td>Publish in 1 newspaper for 3 consecutive weeks</td><td>Before or after formation</td><td>$100 - $200</td></tr>
+        <tr><td>Pennsylvania</td><td>Publish in 2 newspapers (fictitious name)</td><td>Varies</td><td>$150 - $400</td></tr>
+    </tbody>
+</table>
+
+<h3>Annual Report Requirements</h3>
+<p>Most states require annual or biennial reports. Failure to file can result in:</p>
+<ul>
+    <li>Late fees and penalties</li>
+    <li>Administrative dissolution of the entity</li>
+    <li>Loss of good standing status</li>
+    <li>Personal liability for members/directors</li>
+</ul>
+<p>Formation API automatically creates compliance tasks with due dates for each state's annual report requirements.</p>
+
+<h2>Operating as a Registered Agent</h2>
+<p>If you offer registered agent services through the Formation API:</p>
+<ul>
+    <li><strong>Physical presence:</strong> A registered agent must have a physical address (not PO Box) in each state where they serve.</li>
+    <li><strong>Availability:</strong> Must be available during normal business hours to accept service of process.</li>
+    <li><strong>Notification:</strong> Must promptly forward all received documents to the entity.</li>
+    <li><strong>State registration:</strong> Some states require registered agents to register with the state before serving.</li>
+</ul>
+
+<h2>Anti-Money Laundering (AML) Considerations</h2>
+<p>While business formation services are not directly subject to the Bank Secrecy Act, the Corporate Transparency Act imposes related obligations:</p>
+<ul>
+    <li><strong>Know Your Customer (KYC):</strong> Consider implementing identity verification for formation customers, especially for high-risk states or entity types.</li>
+    <li><strong>Suspicious Activity:</strong> Be alert to unusual patterns (bulk formations, shell company indicators).</li>
+    <li><strong>Record Keeping:</strong> Maintain records of who ordered each formation and their relationship to the entity.</li>
+</ul>
+
+<h2>Recommended Disclaimers</h2>
+<p>Include these disclaimers on your platform:</p>
+<div class="code-block">
+<pre><code><span style="color:#86efac">// On formation pages:</span>
+"[Your Company] is not a law firm and does not provide legal advice.
+We provide business formation document filing services. For legal
+advice regarding entity selection, tax implications, or business
+structuring, please consult a licensed attorney or tax professional."
+
+<span style="color:#86efac">// On pricing pages:</span>
+"State filing fees are set by each state's Secretary of State and
+are subject to change. Our service fee is separate from and in
+addition to the state filing fee. State fees are non-refundable
+once the filing has been submitted."
+
+<span style="color:#86efac">// On EIN application pages:</span>
+"EIN applications are submitted to the Internal Revenue Service (IRS).
+Processing times are determined by the IRS and may vary. We do not
+guarantee specific processing times for EIN applications."</code></pre>
+</div>
+
+<h2>Checklist for Launch</h2>
+<ul>
+    <li>Terms of Service clearly define your role as a filing service, not a law firm</li>
+    <li>Privacy Policy covers collection and use of PII, SSN data, and financial information</li>
+    <li>"Not a law firm" disclaimer on all formation-related pages</li>
+    <li>Fee breakdown clearly separates state fees from service fees</li>
+    <li>Processing time estimates match actual state processing times</li>
+    <li>Refund policy clearly stated and accessible</li>
+    <li>Data encryption at rest and in transit implemented</li>
+    <li>SSN data minimized (last 4 only) and encrypted</li>
+    <li>Payment processing handled through PCI-compliant provider (Stripe)</li>
+    <li>BOI reporting requirement communicated to customers</li>
+    <li>Compliance deadline tracking active for all completed formations</li>
+    <li>State-specific publication requirements flagged where applicable</li>
+</ul>
+{% endblock %}

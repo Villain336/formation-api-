@@ -1,0 +1,135 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Features{% endblock %}
+{% block meta_description %}Explore Formation API features: entity formation, name availability, document generation, registered agent, EIN service, compliance tracking, webhooks, and enterprise security across all 50 US states.{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding:4rem 0 3rem;">
+    <div class="container">
+        <h1>Platform Features</h1>
+        <p>A complete business formation infrastructure with everything you need to build, launch, and scale your formation product.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <!-- Entity Formation -->
+        <div class="grid grid-2" style="align-items:center;margin-bottom:5rem;">
+            <div>
+                <span class="badge badge--info mb-2">Core</span>
+                <h2>Multi-State Entity Formation</h2>
+                <p class="text-muted mb-3">Create any business entity type in any US state through a single, consistent API. We handle the complexity of state-specific requirements, naming rules, and filing procedures.</p>
+                <ul style="color:var(--text-secondary);padding-left:1.5rem;">
+                    <li>LLC, Corporation, S-Corp, Nonprofit, LP, LLP</li>
+                    <li>All 50 states + District of Columbia</li>
+                    <li>Standard, expedited, and rush processing</li>
+                    <li>State-specific fee calculation</li>
+                    <li>Order workflow with real-time status tracking</li>
+                </ul>
+            </div>
+            <div class="code-block">
+                <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto;">Response</span></div>
+<pre><code>{
+  "id": "ord_a1b2c3d4...",
+  "order_number": "FORM-2026-A7X9K2",
+  "status": "paid",
+  "entity_type": "llc",
+  "state_of_formation": "DE",
+  "business_name": "Acme Ventures LLC",
+  "total_amount": 33800,
+  "state_fee": 9000,
+  "service_fee": 14900,
+  "registered_agent_fee": 9900
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- API Keys & Security -->
+        <div class="grid grid-2" style="align-items:center;margin-bottom:5rem;">
+            <div class="code-block">
+                <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto;">API Key Management</span></div>
+<pre><code><span style="color:#7dd3fc">POST</span> /api/v1/auth/api-keys
+{
+  "name": "Production Backend",
+  "environment": "live",
+  "scopes": [
+    "orders:read",
+    "orders:write",
+    "states:read",
+    "documents:read"
+  ],
+  "rate_limit_per_minute": 120,
+  "expires_in_days": 365
+}
+
+<span style="color:#86efac">// Response (key shown once)</span>
+{
+  "key": "form_live_sk_a1b2c3...",
+  "key_prefix": "form_live_sk_a1",
+  "scopes": ["orders:read", ...],
+  "rate_limit_per_minute": 120
+}</code></pre>
+            </div>
+            <div>
+                <span class="badge badge--success mb-2">Security</span>
+                <h2>Enterprise-Grade API Keys</h2>
+                <p class="text-muted mb-3">Fine-grained access control with scoped permissions, environment separation, rate limiting, and automatic key rotation.</p>
+                <ul style="color:var(--text-secondary);padding-left:1.5rem;">
+                    <li>Test and live environment separation</li>
+                    <li>13 granular permission scopes</li>
+                    <li>Per-key rate limiting (minute + daily)</li>
+                    <li>Key rotation with zero downtime</li>
+                    <li>Expiring keys with auto-renewal</li>
+                    <li>Usage tracking and audit trail</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- State Requirements -->
+        <div class="text-center mb-4" style="margin-top:3rem;">
+            <h2>50 States, One API</h2>
+            <p class="text-muted" style="max-width:600px;margin:1rem auto 2rem;">Every state has different filing requirements, fees, processing times, and naming rules. We've normalized all of it into a clean, consistent API.</p>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:3rem;">
+            <table>
+                <thead>
+                    <tr><th>State</th><th>LLC Fee</th><th>Processing</th><th>Online Filing</th><th>Special Requirements</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Delaware</strong></td><td>$90</td><td>3-5 weeks</td><td><span class="badge badge--success">Yes</span></td><td>No annual report; $300 franchise tax</td></tr>
+                    <tr><td><strong>Wyoming</strong></td><td>$100</td><td>2-3 weeks</td><td><span class="badge badge--success">Yes</span></td><td>No state income tax</td></tr>
+                    <tr><td><strong>California</strong></td><td>$70</td><td>3-5 weeks</td><td><span class="badge badge--warning">Limited</span></td><td>$800 franchise tax (annual)</td></tr>
+                    <tr><td><strong>Texas</strong></td><td>$300</td><td>2-5 days</td><td><span class="badge badge--success">Yes</span></td><td>Franchise tax for revenue &gt; $2.47M</td></tr>
+                    <tr><td><strong>New York</strong></td><td>$200</td><td>2-4 weeks</td><td><span class="badge badge--success">Yes</span></td><td>Publication requirement ($1,000+)</td></tr>
+                    <tr><td><strong>Florida</strong></td><td>$125</td><td>1-2 weeks</td><td><span class="badge badge--success">Yes</span></td><td>Annual report $138.75</td></tr>
+                    <tr><td><strong>Nevada</strong></td><td>$75+$150</td><td>2-4 weeks</td><td><span class="badge badge--success">Yes</span></td><td>Business license required ($150)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- More Features -->
+        <div class="grid grid-3" style="margin-top:4rem;">
+            <div class="card">
+                <h4 class="card__title">Document Generation</h4>
+                <p class="card__text">Auto-generate Articles of Organization/Incorporation, Operating Agreements, Bylaws, and Certificates of Formation. State-compliant templates rendered to PDF.</p>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Webhook Events</h4>
+                <p class="card__text">Subscribe to 10+ event types: order.created, order.filed, order.completed, payment.succeeded, ein.received, compliance.due, and more. HMAC-SHA256 signed.</p>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Compliance Automation</h4>
+                <p class="card__text">Automatic compliance task creation on formation: annual reports, franchise taxes, publication requirements, and FinCEN BOI reports with due date tracking.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container text-center">
+        <h2>Ready to Integrate?</h2>
+        <p class="text-muted" style="max-width:500px;margin:1rem auto 2rem;">Get your free API keys and start testing in minutes.</p>
+        <a href="/signup" class="btn btn--primary btn--lg">Get Started Free</a>
+    </div>
+</section>
+{% endblock %}

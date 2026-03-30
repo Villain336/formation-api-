@@ -1,0 +1,194 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Business Formation API for Developers{% endblock %}
+{% block meta_description %}Formation API - The developer-first platform for business entity formation. Form LLCs, Corporations, S-Corps across all 50 US states via a simple REST API. Get your API key in 30 seconds.{% endblock %}
+{% block meta_keywords %}business formation api, llc api, incorporate business api, formation as a service, business registration api, developer platform formation{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div style="margin-bottom:1.5rem;">
+            <span class="badge badge--info" style="font-size:.85rem;padding:6px 16px;">Now supporting all 50 US states + DC</span>
+        </div>
+        <h1>Business Formation<br>Infrastructure for Developers</h1>
+        <p>Form LLCs, Corporations, S-Corps, and more across all 50 US states with a single API integration. Built for platforms, fintech, and SaaS companies.</p>
+        <div class="hero__cta">
+            <a href="/signup" class="btn btn--primary btn--lg">Get Free API Keys</a>
+            <a href="/docs/quickstart" class="btn btn--secondary btn--lg">Read the Docs</a>
+        </div>
+
+        <div class="hero__code">
+            <div class="code-block">
+                <div class="code-block__header">
+                    <span class="dot dot--red"></span>
+                    <span class="dot dot--yellow"></span>
+                    <span class="dot dot--green"></span>
+                    <span style="margin-left:auto;">Create an LLC in Delaware</span>
+                </div>
+                <button class="code-block__copy">Copy</button>
+<pre><code><span style="color:#7dd3fc">curl</span> -X POST https://api.formation.dev/api/v1/orders \
+  -H <span style="color:#fde68a">"Authorization: Bearer form_live_sk_..."</span> \
+  -H <span style="color:#fde68a">"Content-Type: application/json"</span> \
+  -d <span style="color:#fde68a">'{
+    "entity_type": "llc",
+    "state_of_formation": "DE",
+    "business_name": "Acme Ventures LLC",
+    "business_address_line1": "123 Innovation Way",
+    "business_city": "Wilmington",
+    "business_state": "DE",
+    "business_zip": "19801",
+    "include_registered_agent": true,
+    "include_ein": true
+  }'</span></code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="section--alt">
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat__value">50+</div>
+                <div class="stat__label">States Supported</div>
+            </div>
+            <div class="stat">
+                <div class="stat__value">6</div>
+                <div class="stat__label">Entity Types</div>
+            </div>
+            <div class="stat">
+                <div class="stat__value">99.9%</div>
+                <div class="stat__label">API Uptime</div>
+            </div>
+            <div class="stat">
+                <div class="stat__value">&lt;200ms</div>
+                <div class="stat__label">Avg Response Time</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2>Everything You Need to Launch a Formation Product</h2>
+            <p class="text-muted" style="max-width:600px;margin:1rem auto 0;">One API to handle the entire business formation lifecycle &mdash; from name availability to compliance tracking.</p>
+        </div>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card__icon">&#x1F3E2;</div>
+                <h4 class="card__title">Entity Formation</h4>
+                <p class="card__text">Form LLCs, Corporations, S-Corps, Nonprofits, LPs, and LLPs. Full support for all 50 states with state-specific requirements handled automatically.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F50D;</div>
+                <h4 class="card__title">Name Availability</h4>
+                <p class="card__text">Check business name availability against state registries. Get naming rules, required suffixes, and restricted word lists per state.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F4C4;</div>
+                <h4 class="card__title">Document Generation</h4>
+                <p class="card__text">Auto-generate Articles of Organization, Articles of Incorporation, Operating Agreements, and Bylaws. State-compliant templates.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F6E1;</div>
+                <h4 class="card__title">Registered Agent</h4>
+                <p class="card__text">Built-in registered agent service in all 50 states. Automatic annual renewals, mail forwarding, and compliance notifications.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F4B3;</div>
+                <h4 class="card__title">Payments &amp; Billing</h4>
+                <p class="card__text">Stripe-powered payment processing. Handle state filing fees, service fees, and recurring subscriptions. Full payment lifecycle management.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F514;</div>
+                <h4 class="card__title">Webhooks &amp; Events</h4>
+                <p class="card__text">Real-time webhook notifications for order status changes, payment events, and compliance deadlines. HMAC-signed payloads.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F4CA;</div>
+                <h4 class="card__title">EIN Service</h4>
+                <p class="card__text">Automated EIN (Tax ID) application with the IRS. Track application status and receive confirmation automatically.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x2705;</div>
+                <h4 class="card__title">Compliance Tracking</h4>
+                <p class="card__text">Automatic compliance task creation &mdash; annual reports, franchise taxes, publication requirements, and BOI reports. Never miss a deadline.</p>
+            </div>
+            <div class="card">
+                <div class="card__icon">&#x1F512;</div>
+                <h4 class="card__title">Enterprise Security</h4>
+                <p class="card__text">Scoped API keys, rate limiting, environment separation (test/live), audit logs, and encryption at rest and in transit.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it Works -->
+<section class="section section--dark">
+    <div class="container text-center">
+        <h2>Ship Formation in 3 Steps</h2>
+        <p style="color:#94a3b8;max-width:500px;margin:1rem auto 3rem;">Integrate business formation into your platform in hours, not months.</p>
+        <div class="grid grid-3" style="text-align:left;">
+            <div>
+                <div style="font-size:2rem;font-weight:800;color:var(--brand-primary);margin-bottom:.5rem;">01</div>
+                <h4 style="color:#f8fafc;">Get Your API Keys</h4>
+                <p style="color:#94a3b8;">Sign up for free and get test API keys instantly. No credit card required. Test mode has full functionality.</p>
+            </div>
+            <div>
+                <div style="font-size:2rem;font-weight:800;color:var(--brand-primary);margin-bottom:.5rem;">02</div>
+                <h4 style="color:#f8fafc;">Integrate the API</h4>
+                <p style="color:#94a3b8;">Use our REST API or SDKs to create formation orders, process payments, and generate documents. Full OpenAPI spec included.</p>
+            </div>
+            <div>
+                <div style="font-size:2rem;font-weight:800;color:var(--brand-primary);margin-bottom:.5rem;">03</div>
+                <h4 style="color:#f8fafc;">Go Live</h4>
+                <p style="color:#94a3b8;">Switch to live keys when ready. We handle state filings, registered agent service, and ongoing compliance. You own the customer relationship.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Use Cases -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2>Built for Platforms &amp; Developers</h2>
+            <p class="text-muted" style="max-width:600px;margin:1rem auto 0;">Whether you're building a fintech app, accounting platform, or legal tech product &mdash; Formation API powers your business formation workflow.</p>
+        </div>
+        <div class="grid grid-2">
+            <div class="card">
+                <h4 class="card__title">Fintech &amp; Neobanks</h4>
+                <p class="card__text">Offer business formation as part of your business banking onboarding. Form the entity, get the EIN, open the account &mdash; all in one flow.</p>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Accounting &amp; Tax Platforms</h4>
+                <p class="card__text">Help clients incorporate before tax season. Auto-generate operating agreements and track compliance deadlines alongside their books.</p>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Legal Tech</h4>
+                <p class="card__text">White-label business formation for your law firm clients. Offer formation services without building the infrastructure yourself.</p>
+            </div>
+            <div class="card">
+                <h4 class="card__title">Immigration Services</h4>
+                <p class="card__text">Help non-US founders form US entities. Handle state-specific requirements, registered agent setup, and EIN applications for international clients.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--alt">
+    <div class="container text-center">
+        <h2>Start Building Today</h2>
+        <p class="text-muted" style="max-width:500px;margin:1rem auto 2rem;">Free to get started. No credit card required. Full API access in test mode.</p>
+        <div class="hero__cta">
+            <a href="/signup" class="btn btn--primary btn--lg">Create Free Account</a>
+            <a href="/docs" class="btn btn--outline btn--lg">View Documentation</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

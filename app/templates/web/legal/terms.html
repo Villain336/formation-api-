@@ -1,0 +1,107 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Terms of Service{% endblock %}
+{% block meta_description %}Formation API Terms of Service. Terms and conditions governing your use of the Formation API business formation platform and services.{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:3rem;">
+    <div class="container" style="max-width:800px;">
+        <h1>Terms of Service</h1>
+        <p class="text-muted">Last updated: March 30, 2026</p>
+
+        <div class="alert alert--info mb-4">
+            These Terms of Service ("Terms") govern your access to and use of the Formation API platform, API services, and related products ("Services") provided by Formation API, Inc. ("Company", "we", "us", "our").
+        </div>
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing or using our Services, you agree to be bound by these Terms. If you are using the Services on behalf of an organization, you represent that you have authority to bind that organization to these Terms.</p>
+
+        <h2>2. Description of Services</h2>
+        <p>Formation API provides a technology platform that facilitates business entity formation filings with state agencies across the United States. Our Services include:</p>
+        <ul>
+            <li>API access for submitting business formation orders</li>
+            <li>Document generation from state-compliant templates</li>
+            <li>Registered agent service coordination</li>
+            <li>EIN application processing</li>
+            <li>Compliance deadline tracking</li>
+        </ul>
+
+        <h3>2.1 We Are Not a Law Firm</h3>
+        <p><strong>Formation API is not a law firm and does not provide legal advice.</strong> We provide business formation document filing services and technology infrastructure. The information provided through our Services is for general informational purposes only and should not be construed as legal, tax, or financial advice. We strongly recommend that you consult with a licensed attorney, accountant, or tax advisor for advice specific to your situation.</p>
+
+        <h2>3. Account Registration</h2>
+        <ul>
+            <li>You must provide accurate, complete, and current information during registration.</li>
+            <li>You are responsible for maintaining the confidentiality of your account credentials and API keys.</li>
+            <li>You are responsible for all activities that occur under your account.</li>
+            <li>You must immediately notify us of any unauthorized use of your account.</li>
+            <li>You must be at least 18 years old to use the Services.</li>
+        </ul>
+
+        <h2>4. API Key Usage</h2>
+        <ul>
+            <li>API keys are issued to you personally or to your organization and may not be shared, sold, or transferred.</li>
+            <li>You are responsible for securing your API keys and all actions taken using them.</li>
+            <li>Test mode keys may be used freely for development and testing purposes.</li>
+            <li>Live mode keys result in real state filings and real charges.</li>
+            <li>We may revoke API keys that violate these Terms or our Acceptable Use Policy.</li>
+        </ul>
+
+        <h2>5. Fees and Payment</h2>
+        <ul>
+            <li><strong>Platform fees</strong> are charged per our published pricing and your selected plan.</li>
+            <li><strong>State filing fees</strong> are passed through at cost with no markup. These fees are set by each state and are subject to change.</li>
+            <li><strong>State fees are non-refundable</strong> once a filing has been submitted to the state agency.</li>
+            <li>Platform service fees may be refunded for orders that have not yet been submitted for filing, less any processing costs incurred.</li>
+            <li>All fees are in US Dollars. Payment is processed through Stripe.</li>
+        </ul>
+
+        <h2>6. Formation Orders</h2>
+        <ul>
+            <li>You are responsible for the accuracy of all information submitted in formation orders.</li>
+            <li>We transmit formation documents to state agencies but do not guarantee approval by any state.</li>
+            <li>Processing times are estimates based on state agency published timelines and may vary.</li>
+            <li>If a filing is rejected by the state, we will notify you and may resubmit if appropriate.</li>
+        </ul>
+
+        <h2>7. Data Accuracy and Your Responsibilities</h2>
+        <p>You represent and warrant that:</p>
+        <ul>
+            <li>All information provided for formation orders is true, accurate, and complete.</li>
+            <li>You have authority to form the entity on behalf of the persons named in the filing.</li>
+            <li>You will comply with all applicable federal, state, and local laws.</li>
+            <li>You will not use the Services for any fraudulent, illegal, or unauthorized purpose.</li>
+            <li>You will inform your end users (if applicable) about their compliance obligations.</li>
+        </ul>
+
+        <h2>8. Intellectual Property</h2>
+        <p>The Formation API platform, including its API, documentation, website, and all related intellectual property, is owned by Formation API, Inc. You are granted a limited, non-exclusive, non-transferable license to use the Services in accordance with these Terms.</p>
+
+        <h2>9. Limitation of Liability</h2>
+        <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, FORMATION API SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM YOUR USE OF THE SERVICES.</p>
+        <p>Our total liability for any claim arising from these Terms shall not exceed the fees paid by you in the 12 months preceding the claim.</p>
+
+        <h2>10. Indemnification</h2>
+        <p>You agree to indemnify and hold harmless Formation API, Inc., its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses arising from your use of the Services or violation of these Terms.</p>
+
+        <h2>11. Termination</h2>
+        <p>Either party may terminate the agreement at any time. Upon termination:</p>
+        <ul>
+            <li>Your API keys will be deactivated.</li>
+            <li>Pending formation orders that have been submitted to state agencies will be completed.</li>
+            <li>You may request export of your data within 30 days of termination.</li>
+            <li>Active registered agent services will continue until their renewal date unless separately cancelled.</li>
+        </ul>
+
+        <h2>12. Modifications</h2>
+        <p>We may modify these Terms at any time. We will notify you of material changes via email or through the platform. Your continued use after changes constitutes acceptance of the modified Terms.</p>
+
+        <h2>13. Governing Law</h2>
+        <p>These Terms are governed by the laws of the State of Delaware, without regard to conflict of law principles. Any disputes shall be resolved in the state or federal courts located in Delaware.</p>
+
+        <h2>14. Contact</h2>
+        <p>For questions about these Terms, contact us at:</p>
+        <p>Formation API, Inc.<br>Email: legal@formation.dev</p>
+    </div>
+</section>
+{% endblock %}

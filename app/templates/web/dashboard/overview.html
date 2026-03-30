@@ -1,0 +1,85 @@
+{% extends "web/layouts/dashboard.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block dash_content %}
+<div class="dash-header">
+    <h1>Dashboard</h1>
+    <a href="/dashboard/api-keys" class="btn btn--primary">Create API Key</a>
+</div>
+
+<div class="dash-stats">
+    <div class="dash-stat">
+        <div class="dash-stat__label">Total Orders</div>
+        <div class="dash-stat__value">0</div>
+    </div>
+    <div class="dash-stat">
+        <div class="dash-stat__label">Active Keys</div>
+        <div class="dash-stat__value">0</div>
+    </div>
+    <div class="dash-stat">
+        <div class="dash-stat__label">API Requests (30d)</div>
+        <div class="dash-stat__value">0</div>
+    </div>
+    <div class="dash-stat">
+        <div class="dash-stat__label">Plan</div>
+        <div class="dash-stat__value" style="font-size:1.25rem;">Free</div>
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="dash-card">
+        <div class="dash-card__header">
+            <h4>Quick Start</h4>
+        </div>
+        <p class="text-muted mb-3">Get started with the Formation API in 3 steps:</p>
+        <ol style="padding-left:1.25rem;color:var(--text-secondary);">
+            <li style="margin-bottom:.75rem;">
+                <strong>Create an API key</strong> &mdash; Go to <a href="/dashboard/api-keys">API Keys</a> and create a test key.
+            </li>
+            <li style="margin-bottom:.75rem;">
+                <strong>Make your first API call</strong> &mdash; Use the key to query state requirements:
+                <div class="code-block" style="margin-top:.5rem;">
+<pre style="font-size:.8rem;padding:1rem;"><code>curl https://api.formation.dev/api/v1/states/DE/llc \
+  -H "X-API-Key: YOUR_TEST_KEY"</code></pre>
+                </div>
+            </li>
+            <li>
+                <strong>Create a test order</strong> &mdash; Submit a formation order in test mode. See the <a href="/docs/quickstart">Quickstart Guide</a>.
+            </li>
+        </ol>
+    </div>
+
+    <div class="dash-card">
+        <div class="dash-card__header">
+            <h4>Resources</h4>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem;">
+            <a href="/docs" class="card" style="padding:1rem;margin:0;">
+                <strong>Documentation</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">Comprehensive guides and API reference</p>
+            </a>
+            <a href="/docs/authentication" class="card" style="padding:1rem;margin:0;">
+                <strong>Authentication Guide</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">API keys, scopes, and security best practices</p>
+            </a>
+            <a href="/docs/api-reference" class="card" style="padding:1rem;margin:0;">
+                <strong>API Reference</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">All endpoints with request/response examples</p>
+            </a>
+            <a href="/docs/compliance-guide" class="card" style="padding:1rem;margin:0;">
+                <strong>Compliance Guide</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">Legal requirements for formation services</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card" style="margin-top:1.5rem;">
+    <div class="dash-card__header">
+        <h4>Recent Orders</h4>
+        <a href="/dashboard/orders" class="btn btn--sm btn--ghost">View All</a>
+    </div>
+    <p class="text-muted">No orders yet. <a href="/docs/quickstart">Create your first order</a> to get started.</p>
+</div>
+{% endblock %}

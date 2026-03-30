@@ -1,0 +1,169 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}API Reference{% endblock %}
+{% block meta_description %}Formation API complete endpoint reference. All routes, request/response formats, error codes, and examples for business formation API.{% endblock %}
+
+{% block docs_content %}
+<h1>API Reference</h1>
+<p>Complete reference for all Formation API endpoints. Base URL: <code>https://api.formation.dev/api/v1</code></p>
+
+<div class="alert alert--info">
+    <strong>Interactive docs:</strong> For a live, interactive API explorer, visit <a href="/docs">/docs</a> (Swagger UI) or <a href="/redoc">/redoc</a> (ReDoc).
+</div>
+
+<h2 id="auth">Authentication</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/auth/register</code></td><td>Create a new user account</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/auth/login</code></td><td>Login with email/password, returns JWT</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/auth/me</code></td><td>Get current user profile</td></tr>
+        <tr><td><span class="method method--patch">PATCH</span></td><td><code>/auth/me</code></td><td>Update user profile</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/auth/scopes</code></td><td>List all available API key scopes</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/auth/api-keys</code></td><td>Create a new API key</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/auth/api-keys</code></td><td>List all API keys</td></tr>
+        <tr><td><span class="method method--patch">PATCH</span></td><td><code>/auth/api-keys/{id}</code></td><td>Update API key settings</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/auth/api-keys/{id}/renew</code></td><td>Extend key expiration</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/auth/api-keys/{id}/roll</code></td><td>Rotate key (new key, same settings)</td></tr>
+        <tr><td><span class="method method--delete">DELETE</span></td><td><code>/auth/api-keys/{id}</code></td><td>Revoke an API key</td></tr>
+    </tbody>
+</table>
+
+<h2 id="orders">Formation Orders</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/orders</code></td><td>Create a new formation order</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/orders</code></td><td>List orders (filterable by status)</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/orders/{id}</code></td><td>Get order details</td></tr>
+        <tr><td><span class="method method--patch">PATCH</span></td><td><code>/orders/{id}</code></td><td>Update a draft order</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/orders/{id}/members</code></td><td>Add member/officer to order</td></tr>
+        <tr><td><span class="method method--delete">DELETE</span></td><td><code>/orders/{id}/members/{mid}</code></td><td>Remove member from order</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/orders/pricing</code></td><td>Get pricing estimate (no auth)</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/orders/name-check</code></td><td>Check business name availability</td></tr>
+    </tbody>
+</table>
+
+<h3>Create Order Request Body</h3>
+<div class="code-block">
+<pre><code>{
+  "entity_type": "llc",                        <span style="color:#86efac">// Required: llc, corporation, s_corp, nonprofit, lp, llp</span>
+  "state_of_formation": "DE",                  <span style="color:#86efac">// Required: 2-letter state code</span>
+  "business_name": "Acme LLC",                 <span style="color:#86efac">// Required: must meet state naming rules</span>
+  "business_name_alt1": "Acme Ventures LLC",   <span style="color:#86efac">// Optional: backup name</span>
+  "business_name_alt2": "Acme Tech LLC",       <span style="color:#86efac">// Optional: second backup</span>
+  "business_purpose": "Technology consulting",  <span style="color:#86efac">// Optional: business purpose</span>
+  "business_address_line1": "123 Main St",     <span style="color:#86efac">// Required</span>
+  "business_city": "Wilmington",               <span style="color:#86efac">// Required</span>
+  "business_state": "DE",                      <span style="color:#86efac">// Required</span>
+  "business_zip": "19801",                     <span style="color:#86efac">// Required</span>
+  "processing_speed": "standard",              <span style="color:#86efac">// standard, expedited, rush</span>
+  "include_registered_agent": true,
+  "include_ein": false,
+  "include_operating_agreement": false,
+  "members": [{
+    "role": "owner",
+    "full_name": "Jane Doe",
+    "email": "jane@example.com",
+    "ownership_percentage": 100,
+    "address_line1": "456 Oak Ave",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip_code": "94105"
+  }]
+}</code></pre>
+</div>
+
+<h2 id="states">States &amp; Requirements</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/states</code></td><td>List all states with LLC requirements</td><td>Optional</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/states/{code}</code></td><td>Get state detail with all entity types</td><td>Optional</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/states/{code}/{entity}</code></td><td>Get specific state + entity config</td><td>Optional</td></tr>
+    </tbody>
+</table>
+
+<h2 id="payments">Payments</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/payments/create-intent</code></td><td>Create Stripe payment intent for order</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/payments/webhook</code></td><td>Stripe webhook receiver</td></tr>
+    </tbody>
+</table>
+
+<h2 id="documents">Documents</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/documents/{order_id}/generate</code></td><td>Generate formation documents</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/documents/{order_id}</code></td><td>List documents for an order</td></tr>
+    </tbody>
+</table>
+
+<h2 id="webhooks">Webhooks</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/webhooks/endpoints</code></td><td>Register a webhook endpoint</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/webhooks/endpoints</code></td><td>List webhook endpoints</td></tr>
+        <tr><td><span class="method method--delete">DELETE</span></td><td><code>/webhooks/endpoints/{id}</code></td><td>Delete endpoint</td></tr>
+        <tr><td><span class="method method--post">POST</span></td><td><code>/webhooks/endpoints/{id}/test</code></td><td>Send test event</td></tr>
+    </tbody>
+</table>
+
+<h3>Webhook Event Types</h3>
+<table>
+    <thead><tr><th>Event</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>order.created</code></td><td>New order created</td></tr>
+        <tr><td><code>order.status_changed</code></td><td>Order status transition</td></tr>
+        <tr><td><code>order.completed</code></td><td>Formation completed successfully</td></tr>
+        <tr><td><code>order.rejected</code></td><td>State rejected the filing</td></tr>
+        <tr><td><code>payment.succeeded</code></td><td>Payment processed successfully</td></tr>
+        <tr><td><code>payment.failed</code></td><td>Payment failed</td></tr>
+        <tr><td><code>document.generated</code></td><td>Document ready for download</td></tr>
+        <tr><td><code>ein.received</code></td><td>EIN number received from IRS</td></tr>
+        <tr><td><code>compliance.due</code></td><td>Compliance deadline approaching</td></tr>
+        <tr><td><code>compliance.overdue</code></td><td>Compliance deadline passed</td></tr>
+    </tbody>
+</table>
+
+<h2 id="compliance">Compliance</h2>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/compliance</code></td><td>List compliance tasks</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/compliance/{id}</code></td><td>Get compliance task detail</td></tr>
+        <tr><td><span class="method method--patch">PATCH</span></td><td><code>/compliance/{id}</code></td><td>Update compliance task status</td></tr>
+    </tbody>
+</table>
+
+<h2 id="admin">Admin</h2>
+<p>Admin endpoints require <code>is_admin: true</code> on the user account.</p>
+<table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/admin/orders</code></td><td>List all orders (all users)</td></tr>
+        <tr><td><span class="method method--patch">PATCH</span></td><td><code>/admin/orders/{id}/status</code></td><td>Update order status (filing workflow)</td></tr>
+        <tr><td><span class="method method--get">GET</span></td><td><code>/admin/dashboard</code></td><td>Dashboard stats and metrics</td></tr>
+    </tbody>
+</table>
+
+<h2>Error Responses</h2>
+<p>All errors follow a consistent format:</p>
+<div class="code-block">
+<pre><code>{
+  "detail": "Human-readable error message"
+}
+
+<span style="color:#86efac">// Common HTTP status codes:</span>
+<span style="color:#86efac">// 400 - Bad Request (validation error)</span>
+<span style="color:#86efac">// 401 - Unauthorized (invalid or missing auth)</span>
+<span style="color:#86efac">// 403 - Forbidden (insufficient permissions)</span>
+<span style="color:#86efac">// 404 - Not Found</span>
+<span style="color:#86efac">// 429 - Rate Limit Exceeded</span>
+<span style="color:#86efac">// 500 - Internal Server Error</span></code></pre>
+</div>
+{% endblock %}

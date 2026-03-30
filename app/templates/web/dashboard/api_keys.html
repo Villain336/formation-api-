@@ -1,0 +1,162 @@
+{% extends "web/layouts/dashboard.html" %}
+
+{% block title %}API Keys{% endblock %}
+
+{% block dash_content %}
+<div class="dash-header">
+    <h1>API Keys</h1>
+</div>
+
+<div class="alert alert--info">
+    <strong>API keys authenticate your server-to-server requests.</strong> Keys are shown only once at creation. Store them securely in environment variables or a secrets manager. Never expose keys in client-side code.
+</div>
+
+<!-- Create New Key Form -->
+<div class="dash-card">
+    <div class="dash-card__header">
+        <h4>Create New API Key</h4>
+    </div>
+    <form id="create-key-form" style="max-width:600px;">
+        <div class="form-group">
+            <label for="key-name">Key Name</label>
+            <input type="text" id="key-name" placeholder="e.g., Production Backend, Staging Service" required>
+            <div class="help">A descriptive name to identify this key's purpose.</div>
+        </div>
+        <div class="form-group">
+            <label for="key-desc">Description (optional)</label>
+            <input type="text" id="key-desc" placeholder="e.g., Used by the main application server">
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label for="key-env">Environment</label>
+                <select id="key-env">
+                    <option value="test">Test (development/testing)</option>
+                    <option value="live">Live (production)</option>
+                </select>
+                <div class="help">Test keys don't create real filings or charges.</div>
+            </div>
+            <div class="form-group">
+                <label for="key-expiry">Expiration</label>
+                <select id="key-expiry">
+                    <option value="">No expiration</option>
+                    <option value="30">30 days</option>
+                    <option value="90" selected>90 days (recommended)</option>
+                    <option value="180">180 days</option>
+                    <option value="365">1 year</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Permissions (Scopes)</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem .5rem;margin-top:.5rem;">
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="orders:read" checked> Read orders
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="orders:write" checked> Create/update orders
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="states:read" checked> Read state data
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="documents:read"> Download documents
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="payments:read"> Read payments
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="payments:write"> Create payments
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="webhooks:read"> Read webhooks
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="webhooks:write"> Manage webhooks
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="compliance:read"> Read compliance
+                </label>
+                <label style="font-weight:400;font-size:.85rem;display:flex;align-items:center;gap:.5rem;">
+                    <input type="checkbox" name="scopes" value="ein:read"> Read EIN status
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="key-rate">Rate Limit (requests per minute)</label>
+            <input type="number" id="key-rate" value="60" min="1" max="1000">
+        </div>
+        <button type="submit" class="btn btn--primary">Create API Key</button>
+    </form>
+</div>
+
+<!-- New Key Display (shown after creation) -->
+<div id="new-key-display" style="display:none;">
+    <div class="dash-card" style="border-color:var(--success);">
+        <div class="dash-card__header">
+            <h4 style="color:var(--success);">API Key Created Successfully</h4>
+        </div>
+        <div class="alert alert--warning" style="margin-top:0;">
+            <strong>Copy this key now!</strong> You won't be able to see it again. If lost, you'll need to create a new key or rotate the existing one.
+        </div>
+        <div class="key-display" style="margin:1rem 0;">
+            <span class="key-display__value" id="new-key-value"></span>
+            <button class="key-display__copy" id="copy-new-key">Copy</button>
+        </div>
+        <p class="text-muted" style="font-size:.85rem;">Store this key securely in your environment variables or secrets manager.</p>
+    </div>
+</div>
+
+<!-- Existing Keys -->
+<div class="dash-card" style="margin-top:1.5rem;">
+    <div class="dash-card__header">
+        <h4>Your API Keys</h4>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Key</th>
+                <th>Environment</th>
+                <th>Scopes</th>
+                <th>Rate Limit</th>
+                <th>Last Used</th>
+                <th>Requests</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="keys-table-body">
+            <tr>
+                <td colspan="9" class="text-muted" style="text-align:center;padding:2rem;">
+                    No API keys yet. Create your first key above.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Key Management Tips -->
+<div class="dash-card" style="margin-top:1.5rem;">
+    <div class="dash-card__header"><h4>Key Management Best Practices</h4></div>
+    <div class="grid grid-2">
+        <div>
+            <h4 style="font-size:.95rem;">Security</h4>
+            <ul style="font-size:.85rem;color:var(--text-secondary);padding-left:1.25rem;">
+                <li>Never commit keys to version control</li>
+                <li>Use environment variables or secrets managers</li>
+                <li>Use separate keys for test and production</li>
+                <li>Apply least-privilege scopes to each key</li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-size:.95rem;">Maintenance</h4>
+            <ul style="font-size:.85rem;color:var(--text-secondary);padding-left:1.25rem;">
+                <li>Rotate keys every 90 days</li>
+                <li>Set expiration dates on all keys</li>
+                <li>Monitor usage and alert on anomalies</li>
+                <li>Revoke unused or compromised keys immediately</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

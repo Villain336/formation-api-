@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, String, Text, ForeignKey, Index
+from sqlalchemy import Boolean, DateTime, Integer, String, Text, ForeignKey, Index, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,6 +20,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     stripe_customer_id: Mapped[str | None] = mapped_column(String(255))
+    plan: Mapped[str] = mapped_column(String(50), default="free")  # free, starter, growth, enterprise
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -42,9 +43,18 @@ class APIKey(Base):
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
     key_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    key_prefix: Mapped[str] = mapped_column(String(12), nullable=False)  # First 12 chars for display
     name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(500))
+    environment: Mapped[str] = mapped_column(String(10), default="test")  # test or live
+    scopes: Mapped[list | None] = mapped_column(JSON, default=list)  # ["orders:read", "orders:write"]
+    rate_limit_per_minute: Mapped[int] = mapped_column(Integer, default=60)
+    rate_limit_per_day: Mapped[int] = mapped_column(Integer, default=10000)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_used_ip: Mapped[str | None] = mapped_column(String(45))
+    total_requests: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

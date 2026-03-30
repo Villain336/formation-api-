@@ -1,0 +1,115 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Privacy Policy{% endblock %}
+{% block meta_description %}Formation API Privacy Policy. How we collect, use, protect, and share your personal information when you use our business formation API platform.{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:3rem;">
+    <div class="container" style="max-width:800px;">
+        <h1>Privacy Policy</h1>
+        <p class="text-muted">Last updated: March 30, 2026</p>
+
+        <div class="alert alert--info mb-4">
+            This Privacy Policy describes how Formation API, Inc. ("Company", "we", "us") collects, uses, and protects your personal information when you use our business formation API platform and related services ("Services").
+        </div>
+
+        <h2>1. Information We Collect</h2>
+
+        <h3>1.1 Account Information</h3>
+        <ul>
+            <li>Full name, email address, phone number</li>
+            <li>Company/organization name</li>
+            <li>Billing information (processed by Stripe; we do not store credit card numbers)</li>
+        </ul>
+
+        <h3>1.2 Formation Order Data</h3>
+        <ul>
+            <li>Business entity name and type</li>
+            <li>Business address</li>
+            <li>Member/officer/director names and addresses</li>
+            <li>Business purpose</li>
+            <li>Last 4 digits of SSN/ITIN (for EIN applications only)</li>
+        </ul>
+
+        <h3>1.3 Technical Data</h3>
+        <ul>
+            <li>IP addresses used to access the API</li>
+            <li>API key usage metrics (request counts, timestamps)</li>
+            <li>Browser/device information for web dashboard access</li>
+            <li>Server logs and error reports</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <ul>
+            <li><strong>Service delivery:</strong> Processing formation orders, generating documents, filing with state agencies</li>
+            <li><strong>Compliance:</strong> Tracking compliance deadlines, sending reminders, maintaining records required by law</li>
+            <li><strong>Communication:</strong> Order status updates, compliance notifications, account-related communications</li>
+            <li><strong>Security:</strong> Fraud prevention, abuse detection, API key authentication</li>
+            <li><strong>Improvement:</strong> Analyzing usage patterns to improve our Services (aggregated, non-personal data only)</li>
+        </ul>
+
+        <h2>3. Information Sharing</h2>
+        <p>We share your information only in these circumstances:</p>
+        <ul>
+            <li><strong>State agencies:</strong> Formation data is transmitted to the appropriate Secretary of State or equivalent agency for filing. This is the core function of our Services.</li>
+            <li><strong>IRS:</strong> EIN application data is submitted to the Internal Revenue Service when you request EIN services.</li>
+            <li><strong>Payment processor:</strong> Billing information is shared with Stripe for payment processing.</li>
+            <li><strong>Registered agent providers:</strong> When you select registered agent services, your entity and registered office information is shared with the agent provider.</li>
+            <li><strong>Legal requirements:</strong> When required by law, subpoena, or court order.</li>
+        </ul>
+        <p>We do <strong>not</strong> sell your personal information to third parties. We do <strong>not</strong> share your data for advertising purposes.</p>
+
+        <h2>4. Data Security</h2>
+        <ul>
+            <li>All data is encrypted in transit using TLS 1.2 or higher</li>
+            <li>All data is encrypted at rest using AES-256</li>
+            <li>SSN data (last 4 digits) is additionally encrypted at the application layer</li>
+            <li>API keys are stored as bcrypt hashes (irreversible)</li>
+            <li>Access to production systems is restricted and logged</li>
+            <li>Regular security assessments and penetration testing</li>
+            <li>Payment data is handled by Stripe (PCI DSS Level 1 compliant)</li>
+        </ul>
+
+        <h2>5. Data Retention</h2>
+        <ul>
+            <li><strong>Formation records:</strong> Retained for 7 years after order completion (IRS and state record-keeping requirements)</li>
+            <li><strong>Account information:</strong> Retained while your account is active and for 30 days after deletion request</li>
+            <li><strong>API logs:</strong> Retained for 90 days for security and debugging purposes</li>
+            <li><strong>Payment records:</strong> Retained for 7 years (tax and financial record-keeping requirements)</li>
+        </ul>
+
+        <h2>6. Your Rights</h2>
+        <p>Depending on your jurisdiction, you may have the right to:</p>
+        <ul>
+            <li><strong>Access:</strong> Request a copy of your personal data</li>
+            <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+            <li><strong>Deletion:</strong> Request deletion of your data (subject to legal retention requirements)</li>
+            <li><strong>Export:</strong> Receive your data in a portable format</li>
+            <li><strong>Opt-out:</strong> Opt out of non-essential communications</li>
+        </ul>
+        <p>To exercise these rights, contact us at <a href="mailto:privacy@formation.dev">privacy@formation.dev</a>.</p>
+
+        <h2>7. California Privacy Rights (CCPA)</h2>
+        <p>If you are a California resident, you have the right to:</p>
+        <ul>
+            <li>Know what personal information we collect and how we use it</li>
+            <li>Request deletion of your personal information</li>
+            <li>Opt out of the sale of personal information (we do not sell personal information)</li>
+            <li>Non-discrimination for exercising your privacy rights</li>
+        </ul>
+
+        <h2>8. International Data Transfers</h2>
+        <p>Our Services are operated in the United States. If you access our Services from outside the US, your data will be transferred to and processed in the United States. By using our Services, you consent to this transfer.</p>
+
+        <h2>9. Children's Privacy</h2>
+        <p>Our Services are not directed to individuals under 18 years of age. We do not knowingly collect personal information from children.</p>
+
+        <h2>10. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy periodically. We will notify you of material changes via email or through the platform. The "Last updated" date at the top indicates when the policy was last revised.</p>
+
+        <h2>11. Contact Us</h2>
+        <p>For privacy-related questions or requests:</p>
+        <p>Formation API, Inc.<br>Privacy Team<br>Email: <a href="mailto:privacy@formation.dev">privacy@formation.dev</a></p>
+    </div>
+</section>
+{% endblock %}

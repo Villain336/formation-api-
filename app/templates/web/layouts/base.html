@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Formation API{% endblock %} | Business Formation API Platform</title>
+    <meta name="description" content="{% block meta_description %}Formation API - The developer platform for business entity formation across all 50 US states. LLC, Corporation, S-Corp formation via API.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}business formation api, llc formation, incorporate business, business entity api, registered agent api{% endblock %}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% block canonical %}{{ base_url }}{% endblock %}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}Formation API - Business Formation Developer Platform{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Form LLCs, Corporations, and more across all 50 US states via API. Developer-first business formation.{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ base_url }}">
+    <meta property="og:site_name" content="Formation API">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Formation API - Business Formation Developer Platform">
+    <meta name="twitter:description" content="Form LLCs, Corporations, and more across all 50 US states via API.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Formation API",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "Business formation API for developers. Form LLCs, Corporations across all 50 US states.",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Free tier available"
+        }
+    }
+    </script>
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    {% block nav %}
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="container nav__inner">
+            <a href="/" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="28" height="28" rx="6" fill="currentColor"/>
+                    <path d="M7 9h14M7 14h10M7 19h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                Formation API
+            </a>
+            <div class="nav__links">
+                <a href="/features">Features</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/docs">Documentation</a>
+                <a href="/docs/api-reference">API Reference</a>
+            </div>
+            <div class="nav__cta">
+                <a href="/login" class="btn btn--ghost">Sign In</a>
+                <a href="/signup" class="btn btn--primary">Get API Keys</a>
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__grid">
+                <div>
+                    <a href="/" class="nav__logo" style="color:#fff;margin-bottom:.5rem;display:inline-flex;">
+                        <svg width="24" height="24" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#2563eb"/><path d="M7 9h14M7 14h10M7 19h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+                        Formation API
+                    </a>
+                    <p class="footer__brand">The developer platform for business formation. Form LLCs, Corporations, and more across all 50 US states via a simple, secure API.</p>
+                </div>
+                <div>
+                    <h4>Product</h4>
+                    <a href="/features">Features</a>
+                    <a href="/pricing">Pricing</a>
+                    <a href="/docs">Documentation</a>
+                    <a href="/docs/api-reference">API Reference</a>
+                    <a href="/changelog">Changelog</a>
+                </div>
+                <div>
+                    <h4>Developers</h4>
+                    <a href="/docs/quickstart">Quickstart</a>
+                    <a href="/docs/authentication">Authentication</a>
+                    <a href="/docs/sdks">SDKs &amp; Libraries</a>
+                    <a href="/docs/webhooks">Webhooks</a>
+                    <a href="/docs/errors">Error Handling</a>
+                </div>
+                <div>
+                    <h4>Company</h4>
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/blog">Blog</a>
+                    <a href="/careers">Careers</a>
+                    <a href="/status">System Status</a>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <a href="/legal/terms">Terms of Service</a>
+                    <a href="/legal/privacy">Privacy Policy</a>
+                    <a href="/legal/security">Security</a>
+                    <a href="/legal/compliance">Compliance</a>
+                    <a href="/legal/dpa">Data Processing</a>
+                    <a href="/legal/acceptable-use">Acceptable Use</a>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <span>&copy; 2026 Formation API, Inc. All rights reserved.</span>
+                <span>
+                    <a href="/legal/terms">Terms</a> &middot;
+                    <a href="/legal/privacy">Privacy</a> &middot;
+                    <a href="/legal/security">Security</a>
+                </span>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

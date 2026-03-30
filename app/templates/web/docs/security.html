@@ -1,0 +1,138 @@
+{% extends "web/layouts/docs.html" %}
+
+{% block title %}Security Best Practices{% endblock %}
+{% block meta_description %}Formation API security guide. API key security, data encryption, PCI compliance, SOC 2, secure integration patterns, and regulatory compliance for business formation.{% endblock %}
+
+{% block docs_content %}
+<h1>Security Best Practices</h1>
+<p>This guide covers how to securely integrate with the Formation API, protect sensitive data, and meet regulatory requirements when handling business formation data.</p>
+
+<div class="alert alert--warning">
+    <strong>Compliance requirement:</strong> Business formation involves personally identifiable information (PII) including names, addresses, SSNs, and financial data. You have a legal obligation to protect this data under state and federal law.
+</div>
+
+<h2>API Key Security</h2>
+
+<h3>Key Storage</h3>
+<ul>
+    <li><strong>Never hardcode API keys</strong> in source code, configuration files committed to version control, or client-side JavaScript.</li>
+    <li><strong>Use environment variables</strong> or a secrets manager (AWS Secrets Manager, HashiCorp Vault, GCP Secret Manager, Doppler).</li>
+    <li><strong>Restrict file permissions</strong> on any files containing API keys to the application user only.</li>
+</ul>
+
+<div class="code-block">
+    <div class="code-block__header"><span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span><span style="margin-left:auto;">Correct: Use environment variables</span></div>
+<pre><code><span style="color:#86efac"># .env (never commit this file)</span>
+FORMATION_API_KEY=form_live_sk_a1b2c3d4...
+
+<span style="color:#86efac"># Python</span>
+import os
+api_key = os.environ["FORMATION_API_KEY"]
+
+<span style="color:#86efac"># Node.js</span>
+const apiKey = process.env.FORMATION_API_KEY;</code></pre>
+</div>
+
+<h3>Key Lifecycle Management</h3>
+<ol>
+    <li><strong>Rotate keys every 90 days</strong> using the <code>/api-keys/{id}/roll</code> endpoint.</li>
+    <li><strong>Set expiration dates</strong> on all keys using <code>expires_in_days</code>.</li>
+    <li><strong>Use separate keys</strong> for each service/environment (don't share keys between staging and production).</li>
+    <li><strong>Monitor usage</strong> via the <code>total_requests</code> and <code>last_used_at</code> fields. Alert on unexpected spikes.</li>
+    <li><strong>Revoke immediately</strong> if a key is compromised. Use <code>DELETE /api-keys/{id}</code>.</li>
+</ol>
+
+<h3>Principle of Least Privilege</h3>
+<p>Only grant the scopes each key needs:</p>
+<div class="code-block">
+<pre><code><span style="color:#86efac">// Backend order service - only needs order operations</span>
+{
+  "scopes": ["orders:read", "orders:write", "states:read"]
+}
+
+<span style="color:#86efac">// Reporting dashboard - read-only access</span>
+{
+  "scopes": ["orders:read", "payments:read", "compliance:read"]
+}
+
+<span style="color:#86efac">// Webhook processor - minimal permissions</span>
+{
+  "scopes": ["webhooks:read", "webhooks:write"]
+}</code></pre>
+</div>
+
+<h2>Data Protection</h2>
+
+<h3>Data in Transit</h3>
+<ul>
+    <li>All API communication is over <strong>TLS 1.2+</strong>. We reject HTTP connections.</li>
+    <li>Pin our SSL certificate if your platform supports it.</li>
+    <li>Verify the API hostname matches <code>api.formation.dev</code>.</li>
+</ul>
+
+<h3>Data at Rest</h3>
+<ul>
+    <li>All data is encrypted at rest using <strong>AES-256</strong>.</li>
+    <li>Sensitive fields (SSN last 4, EIN numbers) are additionally encrypted at the application layer.</li>
+    <li>Database backups are encrypted.</li>
+</ul>
+
+<h3>Sensitive Data Handling</h3>
+<ul>
+    <li><strong>SSN data:</strong> We only accept the last 4 digits of SSN. Never send full SSNs. We use this only for EIN applications.</li>
+    <li><strong>API keys:</strong> Stored as bcrypt hashes. We cannot retrieve your key after creation.</li>
+    <li><strong>Payment data:</strong> Handled entirely by Stripe. We never see or store credit card numbers (PCI DSS compliant).</li>
+    <li><strong>Personal data:</strong> Member names, addresses, and contact info are stored encrypted and access-logged.</li>
+</ul>
+
+<h2>Webhook Security</h2>
+<p>All webhook payloads are signed with HMAC-SHA256. Always verify the signature before processing:</p>
+<div class="code-block">
+<pre><code><span style="color:#86efac"># Python verification example</span>
+import hmac
+import hashlib
+
+def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
+    expected = hmac.new(
+        secret.encode('utf-8'),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(f"sha256={expected}", signature)
+
+<span style="color:#86efac"># In your webhook handler:</span>
+signature = request.headers.get('X-Formation-Signature-256')
+if not verify_webhook(request.body, signature, webhook_secret):
+    return Response(status_code=401)</code></pre>
+</div>
+
+<h2>IP Allowlisting</h2>
+<p>For enterprise plans, you can restrict API key usage to specific IP addresses. Contact support to configure IP allowlists for your keys.</p>
+
+<h2>Audit Trail</h2>
+<p>Every API key tracks:</p>
+<ul>
+    <li><code>last_used_at</code> &mdash; Timestamp of last API call</li>
+    <li><code>last_used_ip</code> &mdash; IP address of last API call</li>
+    <li><code>total_requests</code> &mdash; Lifetime request count</li>
+</ul>
+<p>Review these regularly for unauthorized access patterns.</p>
+
+<h2>Regulatory Compliance</h2>
+<p>When using the Formation API for business formation services, you and your platform should be aware of:</p>
+<ul>
+    <li><strong>FinCEN BOI Reporting:</strong> As of 2024, newly formed entities must file Beneficial Ownership Information reports. Our API auto-creates compliance tasks for this.</li>
+    <li><strong>State-specific requirements:</strong> Some states (NY, AZ, NE, PA) require publication in newspapers. Our compliance tracking flags these.</li>
+    <li><strong>Anti-Money Laundering (AML):</strong> If you're offering formation services to the public, consider implementing KYC checks on your end before submitting orders.</li>
+    <li><strong>Privacy laws:</strong> Member PII is subject to CCPA (California), state privacy laws, and potentially GDPR if serving EU customers forming US entities.</li>
+</ul>
+
+<h2>Incident Response</h2>
+<p>If you suspect a security incident:</p>
+<ol>
+    <li><strong>Immediately revoke</strong> any potentially compromised API keys.</li>
+    <li><strong>Contact us</strong> at <a href="mailto:security@formation.dev">security@formation.dev</a>.</li>
+    <li><strong>Review</strong> your API key usage logs for unauthorized activity.</li>
+    <li><strong>Rotate all keys</strong> as a precaution using the roll endpoint.</li>
+</ol>
+{% endblock %}

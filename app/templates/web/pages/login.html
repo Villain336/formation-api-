@@ -1,0 +1,33 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Sign In{% endblock %}
+{% block meta_description %}Sign in to Formation API. Access your developer dashboard, manage API keys, and track formation orders.{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:4rem;">
+    <div class="container" style="max-width:420px;">
+        <div class="text-center mb-4">
+            <h1 style="font-size:2rem;">Sign in to Formation API</h1>
+            <p class="text-muted">Access your dashboard and API keys</p>
+        </div>
+
+        <div class="card" style="padding:2rem;">
+            <form id="login-form" method="post">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Your password" required>
+                </div>
+                <button type="submit" class="btn btn--primary" style="width:100%;margin-top:.5rem;">Sign In</button>
+            </form>
+        </div>
+
+        <p class="text-center text-muted" style="margin-top:1.5rem;">
+            Don't have an account? <a href="/signup">Create one free</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

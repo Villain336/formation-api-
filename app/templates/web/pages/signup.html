@@ -1,0 +1,48 @@
+{% extends "web/layouts/base.html" %}
+
+{% block title %}Create Account{% endblock %}
+{% block meta_description %}Create your free Formation API account. Get API keys instantly and start building business formation into your platform.{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:4rem;">
+    <div class="container" style="max-width:420px;">
+        <div class="text-center mb-4">
+            <h1 style="font-size:2rem;">Create your account</h1>
+            <p class="text-muted">Free to start. No credit card required.</p>
+        </div>
+
+        <div class="card" style="padding:2rem;">
+            <form id="signup-form" method="post">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Jane Developer" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="company_name">Company Name (optional)</label>
+                    <input type="text" id="company_name" name="company_name" placeholder="Acme Inc">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Min 8 characters" minlength="8" required>
+                    <div class="help">Minimum 8 characters</div>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight:400;font-size:.85rem;display:flex;align-items:start;gap:.5rem;">
+                        <input type="checkbox" required style="margin-top:3px;">
+                        <span>I agree to the <a href="/legal/terms" target="_blank">Terms of Service</a> and <a href="/legal/privacy" target="_blank">Privacy Policy</a></span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn--primary" style="width:100%;margin-top:.5rem;">Create Free Account</button>
+            </form>
+        </div>
+
+        <p class="text-center text-muted" style="margin-top:1.5rem;">
+            Already have an account? <a href="/login">Sign in</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

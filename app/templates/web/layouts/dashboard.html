@@ -1,0 +1,50 @@
+{% extends "web/layouts/base.html" %}
+
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <aside class="dash-sidebar">
+        <div class="dash-sidebar__brand">
+            <a href="/" style="color:inherit;text-decoration:none;">Formation API</a>
+        </div>
+
+        <div class="dash-sidebar__section">
+            <div class="dash-sidebar__title">Overview</div>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+
+        <div class="dash-sidebar__section">
+            <div class="dash-sidebar__title">API</div>
+            <a href="/dashboard/api-keys">API Keys</a>
+            <a href="/dashboard/usage">Usage &amp; Limits</a>
+            <a href="/dashboard/webhooks">Webhooks</a>
+        </div>
+
+        <div class="dash-sidebar__section">
+            <div class="dash-sidebar__title">Formation</div>
+            <a href="/dashboard/orders">Orders</a>
+            <a href="/dashboard/documents">Documents</a>
+            <a href="/dashboard/compliance">Compliance</a>
+        </div>
+
+        <div class="dash-sidebar__section">
+            <div class="dash-sidebar__title">Account</div>
+            <a href="/dashboard/settings">Settings</a>
+            <a href="/dashboard/billing">Billing</a>
+            <a href="/dashboard/team">Team</a>
+        </div>
+
+        <div class="dash-sidebar__section" style="margin-top:auto;padding-top:2rem;">
+            <a href="/docs" target="_blank">Documentation</a>
+            <a href="/docs/api-reference" target="_blank">API Reference</a>
+            <a href="/logout">Sign Out</a>
+        </div>
+    </aside>
+
+    <main class="dash-main">
+        {% block dash_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}
