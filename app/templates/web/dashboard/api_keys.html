@@ -85,7 +85,8 @@
             <label for="key-rate">Rate Limit (requests per minute)</label>
             <input type="number" id="key-rate" value="60" min="1" max="1000">
         </div>
-        <button type="submit" class="btn btn--primary">Create API Key</button>
+        <div id="create-error" class="alert alert--error" style="display:none;"></div>
+        <button type="submit" class="btn btn--primary" id="create-btn">Create API Key</button>
     </form>
 </div>
 
@@ -99,10 +100,17 @@
             <strong>Copy this key now!</strong> You won't be able to see it again. If lost, you'll need to create a new key or rotate the existing one.
         </div>
         <div class="key-display" style="margin:1rem 0;">
-            <span class="key-display__value" id="new-key-value"></span>
+            <span class="key-display__value" id="new-key-value" style="user-select:all;"></span>
             <button class="key-display__copy" id="copy-new-key">Copy</button>
         </div>
-        <p class="text-muted" style="font-size:.85rem;">Store this key securely in your environment variables or secrets manager.</p>
+        <div style="margin-top:1rem;">
+            <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem;">Add to your <code>.env</code> file:</p>
+            <div class="key-display" style="font-size:.8rem;">
+                <span class="key-display__value" id="env-snippet"></span>
+                <button class="key-display__copy" id="copy-env">Copy</button>
+            </div>
+        </div>
+        <button class="btn btn--secondary btn--sm" style="margin-top:1rem;" onclick="document.getElementById('new-key-display').style.display='none'">Dismiss</button>
     </div>
 </div>
 
@@ -110,6 +118,7 @@
 <div class="dash-card" style="margin-top:1.5rem;">
     <div class="dash-card__header">
         <h4>Your API Keys</h4>
+        <button class="btn btn--secondary btn--sm" onclick="loadKeys()">Refresh</button>
     </div>
     <table>
         <thead>
@@ -126,11 +135,7 @@
             </tr>
         </thead>
         <tbody id="keys-table-body">
-            <tr>
-                <td colspan="9" class="text-muted" style="text-align:center;padding:2rem;">
-                    No API keys yet. Create your first key above.
-                </td>
-            </tr>
+            <tr><td colspan="9" class="text-muted" style="text-align:center;padding:2rem;">Loading...</td></tr>
         </tbody>
     </table>
 </div>
@@ -159,4 +164,230 @@
         </div>
     </div>
 </div>
+
+<script>
+const API_BASE = '/api/v1';
+let authToken = localStorage.getItem('formation_token');
+
+// If no token, redirect to login
+if (!authToken) {
+    // Check URL params for token
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('token')) {
+        authToken = params.get('token');
+        localStorage.setItem('formation_token', authToken);
+    }
+}
+
+function headers() {
+    return {
+        'Authorization': 'Bearer ' + authToken,
+        'Content-Type': 'application/json',
+    };
+}
+
+function timeAgo(dateStr) {
+    if (!dateStr) return 'Never';
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = (now - d) / 1000;
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+}
+
+// Load existing keys
+async function loadKeys() {
+    if (!authToken) {
+        document.getElementById('keys-table-body').innerHTML =
+            '<tr><td colspan="9" style="text-align:center;padding:2rem;"><a href="/login">Sign in</a> to manage your API keys.</td></tr>';
+        return;
+    }
+
+    try {
+        const resp = await fetch(API_BASE + '/auth/api-keys', { headers: headers() });
+        if (resp.status === 401) {
+            localStorage.removeItem('formation_token');
+            document.getElementById('keys-table-body').innerHTML =
+                '<tr><td colspan="9" style="text-align:center;padding:2rem;"><a href="/login">Session expired. Sign in again.</a></td></tr>';
+            return;
+        }
+        const keys = await resp.json();
+
+        if (keys.length === 0) {
+            document.getElementById('keys-table-body').innerHTML =
+                '<tr><td colspan="9" class="text-muted" style="text-align:center;padding:2rem;">No API keys yet. Create your first key above.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        for (const k of keys) {
+            const envBadge = k.environment === 'live'
+                ? '<span class="badge badge--warning">Live</span>'
+                : '<span class="badge badge--info">Test</span>';
+            const statusBadge = k.is_active
+                ? '<span class="badge badge--success">Active</span>'
+                : '<span class="badge badge--error">Revoked</span>';
+            const scopeCount = (k.scopes || []).length;
+
+            html += '<tr>';
+            html += '<td><strong>' + k.name + '</strong>';
+            if (k.description) html += '<br><span style="font-size:.75rem;color:var(--text-muted);">' + k.description + '</span>';
+            html += '</td>';
+            html += '<td><code style="font-size:.8rem;">' + k.key_prefix + '...</code></td>';
+            html += '<td>' + envBadge + '</td>';
+            html += '<td><span class="badge badge--neutral">' + scopeCount + ' scopes</span></td>';
+            html += '<td>' + k.rate_limit_per_minute + '/min</td>';
+            html += '<td style="font-size:.85rem;">' + timeAgo(k.last_used_at) + '</td>';
+            html += '<td>' + (k.total_requests || 0).toLocaleString() + '</td>';
+            html += '<td>' + statusBadge + '</td>';
+            html += '<td>';
+            if (k.is_active) {
+                html += '<button class="btn btn--sm btn--secondary" onclick="rollKey(\'' + k.id + '\', \'' + k.name + '\')" title="Rotate key">Roll</button> ';
+                html += '<button class="btn btn--sm btn--danger" onclick="revokeKey(\'' + k.id + '\', \'' + k.name + '\')" title="Revoke key">Revoke</button>';
+            }
+            html += '</td>';
+            html += '</tr>';
+        }
+        document.getElementById('keys-table-body').innerHTML = html;
+    } catch (e) {
+        document.getElementById('keys-table-body').innerHTML =
+            '<tr><td colspan="9" class="text-muted" style="text-align:center;padding:2rem;">Error loading keys. Check console.</td></tr>';
+        console.error(e);
+    }
+}
+
+// Create key
+document.getElementById('create-key-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('create-error');
+    errorEl.style.display = 'none';
+
+    if (!authToken) {
+        errorEl.textContent = 'Please sign in first.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    const name = document.getElementById('key-name').value;
+    const desc = document.getElementById('key-desc').value;
+    const env = document.getElementById('key-env').value;
+    const expiry = document.getElementById('key-expiry').value;
+    const rate = parseInt(document.getElementById('key-rate').value);
+    const scopes = Array.from(document.querySelectorAll('input[name="scopes"]:checked')).map(c => c.value);
+
+    const body = {
+        name: name,
+        description: desc || null,
+        environment: env,
+        scopes: scopes,
+        rate_limit_per_minute: rate,
+    };
+    if (expiry) body.expires_in_days = parseInt(expiry);
+
+    const btn = document.getElementById('create-btn');
+    btn.textContent = 'Creating...';
+    btn.disabled = true;
+
+    try {
+        const resp = await fetch(API_BASE + '/auth/api-keys', {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify(body),
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+            errorEl.textContent = data.detail || 'Error creating key.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        // Show the new key
+        document.getElementById('new-key-value').textContent = data.key;
+        document.getElementById('env-snippet').textContent = 'FORMATION_API_KEY=' + data.key;
+        document.getElementById('new-key-display').style.display = 'block';
+
+        // Copy button
+        document.getElementById('copy-new-key').onclick = function() {
+            navigator.clipboard.writeText(data.key);
+            this.textContent = 'Copied!';
+            setTimeout(() => { this.textContent = 'Copy'; }, 2000);
+        };
+        document.getElementById('copy-env').onclick = function() {
+            navigator.clipboard.writeText('FORMATION_API_KEY=' + data.key);
+            this.textContent = 'Copied!';
+            setTimeout(() => { this.textContent = 'Copy'; }, 2000);
+        };
+
+        // Reset form
+        document.getElementById('create-key-form').reset();
+        document.getElementById('key-expiry').value = '90';
+
+        // Reload keys table
+        loadKeys();
+
+        // Scroll to the new key
+        document.getElementById('new-key-display').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        errorEl.textContent = 'Network error. Is the server running?';
+        errorEl.style.display = 'block';
+        console.error(e);
+    } finally {
+        btn.textContent = 'Create API Key';
+        btn.disabled = false;
+    }
+});
+
+// Roll (rotate) key
+async function rollKey(keyId, keyName) {
+    if (!confirm('Rotate key "' + keyName + '"?\n\nThis will deactivate the current key and generate a new one with the same settings. Any systems using the old key will stop working.')) {
+        return;
+    }
+
+    const resp = await fetch(API_BASE + '/auth/api-keys/' + keyId + '/roll', {
+        method: 'POST',
+        headers: headers(),
+    });
+    const data = await resp.json();
+
+    if (resp.ok) {
+        document.getElementById('new-key-value').textContent = data.key;
+        document.getElementById('env-snippet').textContent = 'FORMATION_API_KEY=' + data.key;
+        document.getElementById('new-key-display').style.display = 'block';
+        document.getElementById('copy-new-key').onclick = function() {
+            navigator.clipboard.writeText(data.key);
+            this.textContent = 'Copied!';
+            setTimeout(() => { this.textContent = 'Copy'; }, 2000);
+        };
+        document.getElementById('new-key-display').scrollIntoView({ behavior: 'smooth' });
+        loadKeys();
+    } else {
+        alert('Error: ' + (data.detail || 'Failed to rotate key'));
+    }
+}
+
+// Revoke key
+async function revokeKey(keyId, keyName) {
+    if (!confirm('Revoke key "' + keyName + '"?\n\nThis permanently deactivates the key. Any systems using it will immediately lose access. This cannot be undone.')) {
+        return;
+    }
+
+    const resp = await fetch(API_BASE + '/auth/api-keys/' + keyId, {
+        method: 'DELETE',
+        headers: headers(),
+    });
+
+    if (resp.ok) {
+        loadKeys();
+    } else {
+        const data = await resp.json();
+        alert('Error: ' + (data.detail || 'Failed to revoke key'));
+    }
+}
+
+// Load keys on page load
+document.addEventListener('DOMContentLoaded', loadKeys);
+</script>
 {% endblock %}
