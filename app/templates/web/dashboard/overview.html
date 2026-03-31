@@ -8,22 +8,30 @@
     <a href="/dashboard/api-keys" class="btn btn--primary">Create API Key</a>
 </div>
 
+<!-- Welcome banner for new users -->
+<div id="welcome-banner" class="alert alert--success" style="display:none;">
+    <div>
+        <strong>Welcome, <span id="user-name"></span>!</strong> Your account is ready.
+        Start by creating an API key below, then follow the quickstart guide to make your first API call.
+    </div>
+</div>
+
 <div class="dash-stats">
     <div class="dash-stat">
         <div class="dash-stat__label">Total Orders</div>
-        <div class="dash-stat__value">0</div>
+        <div class="dash-stat__value" id="stat-orders">--</div>
     </div>
     <div class="dash-stat">
         <div class="dash-stat__label">Active Keys</div>
-        <div class="dash-stat__value">0</div>
+        <div class="dash-stat__value" id="stat-keys">--</div>
     </div>
     <div class="dash-stat">
         <div class="dash-stat__label">API Requests (30d)</div>
-        <div class="dash-stat__value">0</div>
+        <div class="dash-stat__value" id="stat-requests">--</div>
     </div>
     <div class="dash-stat">
         <div class="dash-stat__label">Plan</div>
-        <div class="dash-stat__value" style="font-size:1.25rem;">Free</div>
+        <div class="dash-stat__value" id="stat-plan" style="font-size:1.25rem;">--</div>
     </div>
 </div>
 
@@ -40,7 +48,7 @@
             <li style="margin-bottom:.75rem;">
                 <strong>Make your first API call</strong> &mdash; Use the key to query state requirements:
                 <div class="code-block" style="margin-top:.5rem;">
-<pre style="font-size:.8rem;padding:1rem;"><code>curl https://api.formation.dev/api/v1/states/DE/llc \
+<pre style="font-size:.8rem;padding:1rem;"><code>curl <span id="api-base-url">http://localhost:8000</span>/api/v1/states/entity-types \
   -H "X-API-Key: YOUR_TEST_KEY"</code></pre>
                 </div>
             </li>
@@ -55,21 +63,21 @@
             <h4>Resources</h4>
         </div>
         <div style="display:flex;flex-direction:column;gap:.75rem;">
-            <a href="/docs" class="card" style="padding:1rem;margin:0;">
-                <strong>Documentation</strong>
-                <p class="text-muted" style="font-size:.85rem;margin:0;">Comprehensive guides and API reference</p>
+            <a href="/docs/quickstart" class="card" style="padding:1rem;margin:0;">
+                <strong>Quickstart Guide</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">Create keys and your first order in 5 minutes</p>
             </a>
-            <a href="/docs/authentication" class="card" style="padding:1rem;margin:0;">
-                <strong>Authentication Guide</strong>
-                <p class="text-muted" style="font-size:.85rem;margin:0;">API keys, scopes, and security best practices</p>
+            <a href="/docs/integration-guide" class="card" style="padding:1rem;margin:0;">
+                <strong>Integration Guide</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">Full request/response flow with code examples</p>
             </a>
             <a href="/docs/api-reference" class="card" style="padding:1rem;margin:0;">
                 <strong>API Reference</strong>
-                <p class="text-muted" style="font-size:.85rem;margin:0;">All endpoints with request/response examples</p>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">All endpoints with request/response schemas</p>
             </a>
-            <a href="/docs/compliance-guide" class="card" style="padding:1rem;margin:0;">
-                <strong>Compliance Guide</strong>
-                <p class="text-muted" style="font-size:.85rem;margin:0;">Legal requirements for formation services</p>
+            <a href="/use-cases" class="card" style="padding:1rem;margin:0;">
+                <strong>Use Cases</strong>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">Real integration scenarios with complete code</p>
             </a>
         </div>
     </div>
@@ -80,6 +88,91 @@
         <h4>Recent Orders</h4>
         <a href="/dashboard/orders" class="btn btn--sm btn--ghost">View All</a>
     </div>
-    <p class="text-muted">No orders yet. <a href="/docs/quickstart">Create your first order</a> to get started.</p>
+    <div id="recent-orders">
+        <p class="text-muted">Loading...</p>
+    </div>
 </div>
+
+<script>
+const API_BASE = '/api/v1';
+const token = localStorage.getItem('formation_token');
+const user = JSON.parse(localStorage.getItem('formation_user') || 'null');
+
+// If not logged in, redirect to login
+if (!token) {
+    window.location.href = '/login';
+}
+
+function headers() {
+    return { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
+}
+
+// Show welcome banner with user name
+if (user) {
+    document.getElementById('user-name').textContent = user.full_name || user.email;
+    document.getElementById('stat-plan').textContent = (user.plan || 'free').charAt(0).toUpperCase() + (user.plan || 'free').slice(1);
+    // Show welcome only on first visit
+    if (!localStorage.getItem('formation_welcomed')) {
+        document.getElementById('welcome-banner').style.display = 'block';
+        localStorage.setItem('formation_welcomed', '1');
+    }
+}
+
+// Set base URL in code example
+document.getElementById('api-base-url').textContent = window.location.origin;
+
+// Load dashboard stats
+async function loadStats() {
+    try {
+        // Get keys
+        const keysResp = await fetch(API_BASE + '/auth/api-keys', { headers: headers() });
+        if (keysResp.status === 401) {
+            localStorage.removeItem('formation_token');
+            window.location.href = '/login';
+            return;
+        }
+        const keys = await keysResp.json();
+        const activeKeys = keys.filter(k => k.is_active);
+        document.getElementById('stat-keys').textContent = activeKeys.length;
+
+        // Sum total requests
+        const totalRequests = keys.reduce((sum, k) => sum + (k.total_requests || 0), 0);
+        document.getElementById('stat-requests').textContent = totalRequests.toLocaleString();
+
+        // Get orders
+        const ordersResp = await fetch(API_BASE + '/orders?per_page=5', { headers: headers() });
+        if (ordersResp.ok) {
+            const ordersData = await ordersResp.json();
+            document.getElementById('stat-orders').textContent = ordersData.total;
+
+            if (ordersData.orders.length === 0) {
+                document.getElementById('recent-orders').innerHTML =
+                    '<p class="text-muted">No orders yet. <a href="/docs/quickstart">Create your first order</a> to get started.</p>';
+            } else {
+                let html = '<table><thead><tr><th>Order</th><th>Entity</th><th>State</th><th>Business Name</th><th>Status</th><th>Total</th><th>Date</th></tr></thead><tbody>';
+                for (const o of ordersData.orders) {
+                    const statusColors = {
+                        'draft': 'neutral', 'pending_payment': 'warning', 'paid': 'info',
+                        'processing': 'info', 'filed': 'success', 'completed': 'success',
+                        'rejected': 'error', 'cancelled': 'error'
+                    };
+                    const badge = '<span class="badge badge--' + (statusColors[o.status] || 'neutral') + '">' + o.status + '</span>';
+                    const date = new Date(o.created_at).toLocaleDateString();
+                    const total = '$' + (o.total_amount / 100).toFixed(2);
+                    html += '<tr><td><code>' + o.order_number + '</code></td><td>' + o.entity_type.toUpperCase() + '</td><td>' + o.state_of_formation + '</td><td>' + o.business_name + '</td><td>' + badge + '</td><td>' + total + '</td><td>' + date + '</td></tr>';
+                }
+                html += '</tbody></table>';
+                document.getElementById('recent-orders').innerHTML = html;
+            }
+        }
+    } catch (e) {
+        console.error('Error loading dashboard:', e);
+        document.getElementById('stat-orders').textContent = '0';
+        document.getElementById('stat-keys').textContent = '0';
+        document.getElementById('stat-requests').textContent = '0';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadStats);
+</script>
 {% endblock %}

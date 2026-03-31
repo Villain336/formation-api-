@@ -12,7 +12,9 @@
         </div>
 
         <div class="card" style="padding:2rem;">
-            <form id="login-form" method="post">
+            <div id="login-error" class="alert alert--error" style="display:none;"></div>
+            <div id="login-success" class="alert alert--success" style="display:none;"></div>
+            <form id="login-form">
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" placeholder="you@example.com" required>
@@ -21,7 +23,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Your password" required>
                 </div>
-                <button type="submit" class="btn btn--primary" style="width:100%;margin-top:.5rem;">Sign In</button>
+                <button type="submit" class="btn btn--primary" id="login-btn" style="width:100%;margin-top:.5rem;">Sign In</button>
             </form>
         </div>
 
@@ -30,4 +32,57 @@
         </p>
     </div>
 </section>
+
+<script>
+// If already logged in, redirect to dashboard
+if (localStorage.getItem('formation_token')) {
+    window.location.href = '/dashboard';
+}
+
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('login-error');
+    const successEl = document.getElementById('login-success');
+    errorEl.style.display = 'none';
+    successEl.style.display = 'none';
+    const btn = document.getElementById('login-btn');
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+
+    try {
+        const resp = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            }),
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+            errorEl.textContent = data.detail || 'Invalid email or password.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        // Save token and user info
+        localStorage.setItem('formation_token', data.access_token);
+        localStorage.setItem('formation_user', JSON.stringify(data.user));
+
+        successEl.textContent = 'Signed in! Redirecting...';
+        successEl.style.display = 'block';
+
+        // Redirect to dashboard
+        setTimeout(function() { window.location.href = '/dashboard'; }, 500);
+    } catch (err) {
+        errorEl.textContent = 'Network error. Make sure the server is running.';
+        errorEl.style.display = 'block';
+        console.error(err);
+    } finally {
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
+    }
+});
+</script>
 {% endblock %}

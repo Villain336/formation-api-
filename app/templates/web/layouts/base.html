@@ -66,12 +66,25 @@
                 <a href="/use-cases">Use Cases</a>
                 <a href="/docs">Documentation</a>
             </div>
-            <div class="nav__cta">
-                <a href="/login" class="btn btn--ghost">Sign In</a>
-                <a href="/signup" class="btn btn--primary">Get API Keys</a>
+            <div class="nav__cta" id="nav-cta">
+                <a href="/login" class="btn btn--ghost" id="nav-signin">Sign In</a>
+                <a href="/signup" class="btn btn--primary" id="nav-signup">Get API Keys</a>
+                <a href="/dashboard" class="btn btn--primary" id="nav-dashboard" style="display:none;">Dashboard</a>
             </div>
         </div>
     </nav>
+    <script>
+    (function(){
+        if (localStorage.getItem('formation_token')) {
+            var si = document.getElementById('nav-signin');
+            var su = document.getElementById('nav-signup');
+            var db = document.getElementById('nav-dashboard');
+            if (si) si.style.display = 'none';
+            if (su) su.style.display = 'none';
+            if (db) db.style.display = '';
+        }
+    })();
+    </script>
     {% endblock %}
 
     <main>

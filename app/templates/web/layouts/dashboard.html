@@ -39,7 +39,13 @@
         <div class="dash-sidebar__section" style="margin-top:auto;padding-top:2rem;">
             <a href="/docs" target="_blank">Documentation</a>
             <a href="/docs/api-reference" target="_blank">API Reference</a>
-            <a href="/logout">Sign Out</a>
+        </div>
+
+        <!-- User info + logout -->
+        <div style="padding:1rem 1.25rem;border-top:1px solid #334155;margin-top:1rem;">
+            <div id="sidebar-user-name" style="color:#e2e8f0;font-size:.85rem;font-weight:600;margin-bottom:.25rem;"></div>
+            <div id="sidebar-user-email" style="color:#64748b;font-size:.75rem;margin-bottom:.75rem;"></div>
+            <a href="#" onclick="logout();return false;" style="color:#ef4444;font-size:.85rem;">Sign Out</a>
         </div>
     </aside>
 
@@ -47,4 +53,37 @@
         {% block dash_content %}{% endblock %}
     </main>
 </div>
+
+<script>
+// Auth check for all dashboard pages
+(function() {
+    var token = localStorage.getItem('formation_token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    var user = JSON.parse(localStorage.getItem('formation_user') || 'null');
+    if (user) {
+        var nameEl = document.getElementById('sidebar-user-name');
+        var emailEl = document.getElementById('sidebar-user-email');
+        if (nameEl) nameEl.textContent = user.full_name || '';
+        if (emailEl) emailEl.textContent = user.email || '';
+    }
+
+    // Mark active sidebar link
+    var current = window.location.pathname;
+    document.querySelectorAll('.dash-sidebar a').forEach(function(link) {
+        if (link.getAttribute('href') === current) {
+            link.classList.add('active');
+        }
+    });
+})();
+
+function logout() {
+    localStorage.removeItem('formation_token');
+    localStorage.removeItem('formation_user');
+    localStorage.removeItem('formation_welcomed');
+    window.location.href = '/login';
+}
+</script>
 {% endblock %}
